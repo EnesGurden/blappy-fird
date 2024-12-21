@@ -1,0 +1,57 @@
+# Meson'un oluşturduğu derleme klasörü
+/build*/
+
+# Çalıştırılabilir dosyalar
+*.exe
+*.out
+*.app
+*.bin
+
+# Nesne dosyaları
+*.o
+*.obj
+*.lo
+
+# Bağlantı dosyaları
+*.a
+*.so
+*.dll
+*.dylib
+
+# Derleyici ara dosyaları
+*.s
+*.ii
+*.i
+
+# Meson ve Ninja ile ilgili geçici dosyalar
+.ninja_deps
+.ninja_log
+*.ninja
+meson-logs/
+meson-private/
+
+# İşletim sistemi ile ilgili dosyalar
+.DS_Store
+Thumbs.db
+
+# C ile ilgili genel derleme dosyaları
+*.gcda
+*.gcno
+*.gcov
+*.elf
+
+# Debug sembolleri
+*.dSYM/
+*.pdb
+*.ilk
+
+# IDE ve editör dosyaları
+.vscode/
+.idea/
+*.iml
+
+# Yedekleme ve geçici dosyalar
+*.bak
+*.tmp
+*.swp
+*.swo
