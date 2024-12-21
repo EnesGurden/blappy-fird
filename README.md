@@ -9,6 +9,8 @@ This is my flappy bird
 - gcc
 - ninja
 - clang-format
+- clang-tidy
+- cppcheck
 
 ## Build
 
@@ -21,6 +23,12 @@ meson compile -C build
 
 ```
 clang-tidy --config-file=.clang-tidy -p .\build src/*.c 
+```
+
+## Run cppcheck
+
+```
+cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIncludeSystem
 ```
 
 ## Run
