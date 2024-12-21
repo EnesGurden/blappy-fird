@@ -8,6 +8,7 @@ This is my flappy bird
 - raylib
 - gcc
 - ninja
+- clang-format
 
 ## Build
 
@@ -22,3 +23,8 @@ meson compile -C build
 ./build/blappy-fird
 ```
 
+## Development
+
+```
+clang-format -style=file -i <path/to/source/file>
+```
