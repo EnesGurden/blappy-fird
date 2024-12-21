@@ -17,6 +17,12 @@ meson setup build
 meson compile -C build
 ```
 
+## Run clang-tidy
+
+```
+clang-tidy --config-file=.clang-tidy -p .\build src/*.c 
+```
+
 ## Run
 
 ```

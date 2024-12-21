@@ -1,0 +1,33 @@
+---
+Checks:          '*,-altera-*,-clang-diagnostic-*,-cppcoreguidelines-*,-llvmlibc-restrict-system-libc-headers'
+WarningsAsErrors: ''
+HeaderFileExtensions:
+  - ''
+  - h
+  - hh
+  - hpp
+  - hxx
+ImplementationFileExtensions:
+  - c
+  - cc
+  - cpp
+  - cxx
+HeaderFilterRegex: ''
+ExcludeHeaderFilterRegex: ''
+FormatStyle:     file
+CheckOptions:
+  - key: 'readability-identifier-naming.VariableCase'
+    value: 'camelBack'
+  - key: 'readability-identifier-naming.FunctionCase'
+    value: 'camelBack'
+  - key: 'readability-identifier-naming.ClassCase'
+    value: 'CamelCase'
+  - key: 'readability-identifier-naming.ConstantCase'
+    value: 'CamelCase'
+  - key: 'readability-identifier-naming.MemberVariableCase'
+    value: 'm_'
+  - key: 'readability-identifier-naming.GlobalConstantCase'
+    value: 'CamelCase'
+SystemHeaders:   false
+...
+

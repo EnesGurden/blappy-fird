@@ -4,7 +4,7 @@ project('blappy-fird', 'c',
 
 raylib_dep = dependency('raylib')
 
-exe = executable('blappy-fird', 'blappy_fird.c',
+exe = executable('blappy-fird', 'src/main.c',
 dependencies: raylib_dep,
   install : true)
 
