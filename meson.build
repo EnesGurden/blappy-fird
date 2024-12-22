@@ -1,11 +1,17 @@
 project('blappy-fird', 'c',
   version : '0.1',
-  default_options : ['warning_level=3'])
+  default_options : ['default_library=shared','warning_level=3'])
 
-raylib_dep = dependency('raylib')
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : false)
+gdi32_dep = cc.find_library('gdi32', required : false)
+winmm_dep = cc.find_library('winmm', required : false)
+
+cmake = import('cmake')
+raylib_proj = cmake.subproject('raylib')
+raylib_dep = raylib_proj.dependency('raylib')
 
 exe = executable('blappy-fird', 'src/main.c',
-dependencies: raylib_dep,
-  install : true)
+dependencies: [raylib_dep, m_dep, gdi32_dep, winmm_dep], install : true)
 
 test('basic', exe)

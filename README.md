@@ -37,6 +37,12 @@ cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIn
 ./build/blappy-fird
 ```
 
+## Create nsis installer
+
+```
+makensis config.nsi
+```
+
 ## Development
 
 ```
