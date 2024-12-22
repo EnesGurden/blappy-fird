@@ -12,8 +12,7 @@ ImplementationFileExtensions:
   - cc
   - cpp
   - cxx
-HeaderFilterRegex: ''
-ExcludeHeaderFilterRegex: ''
+HeaderFilterRegex: '^(?!.*subprojects/).*'
 FormatStyle:     file
 CheckOptions:
   - key: 'readability-identifier-naming.VariableCase'

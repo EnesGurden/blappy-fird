@@ -1,0 +1,69 @@
+name: CI Workflow on MinGW64
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mingw-ci:
+    runs-on: windows-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up venv
+      - name: Set up venv
+        run: |
+          choco install python --version 3.13.1
+          python3.13.exe -m venv env-build
+          python3.13.exe -m venv env-build
+          . .\env-build\Scripts\Activate.ps1
+          pip install cmake ninja meson cppcheck
+
+      # Set up MinGW64 environment
+      - name: Set up MinGW64
+        run: |
+          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+          choco install mingw --version 8.1.0
+          echo "C:\\tools\\mingw64\\bin" >> "$GITHUB_PATH"
+          refreshenv
+ 
+     # Check code format
+      - name: Check format
+        run: |
+          clang-format -style=Webkit -i $(git ls-files 'src/*.c' 'src/*.h')
+          git diff --exit-code || (echo "Code is not formatted properly." && exit 1)
+
+      # Build the project
+      - name: Build
+        run: |
+          . .\env-build\Scripts\Activate.ps1
+          meson.exe setup build
+          meson.exe compile -C build
+
+      # Lint the code
+      - name: Lint
+        run: |
+          . .\env-build\Scripts\Activate.ps1
+          cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIncludeSystem --inconclusive --quiet --error-exitcode=1
+          clang-tidy --config-file=.clang-tidy -p .\build src/*.c
+
+      # Package the build output
+      - name: Package build artifacts
+        run: |
+          makensis config.nsi
+          mkdir package
+          cp BlappyFirdInstaller.exe package/
+        shell: bash
+
+      # Upload package as an artifact
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Installer-Package
+          path: package/
+
+          
