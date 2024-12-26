@@ -16,10 +16,9 @@ int main(int argc, char** argv)
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        const int FontSize = 20;
-        const int CoordinateTextX = 190;
-        const int CoordinateTextY = 200;
-        DrawText("Congrats! You created your first window!", CoordinateTextX, CoordinateTextY, FontSize, LIGHTGRAY);
+        const int BirdX = 190;
+        const int BirdY = 200;
+        DrawRectangle(BirdX, BirdY, 50, 20, YELLOW);
         EndDrawing();
     }
 
