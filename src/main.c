@@ -16,9 +16,11 @@ int main(int argc, char** argv)
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        const int BirdX = 190;
-        const int BirdY = 200;
-        DrawRectangle(BirdX, BirdY, 50, 20, YELLOW);
+        const int BirdX = 400;
+        const int BirdY = 225;
+        const int BirdWidth = 50;
+        const int BirdHeight = 20;
+        DrawRectangle(BirdX, BirdY, BirdWidth, BirdHeight, YELLOW);
         EndDrawing();
     }
 
