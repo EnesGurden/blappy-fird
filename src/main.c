@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(SKYBLUE);
         if (IsKeyDown(KEY_UP)) {
             BirdY--;
         }
