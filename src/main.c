@@ -14,12 +14,18 @@ int main(int argc, char** argv)
     SetTargetFPS(FpsValue);
 
     Texture2D birdTex = LoadTexture("resources/bird.png");
+    int BirdX = 400;
+    int BirdY = 225;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        const int BirdX = 400;
-        const int BirdY = 225;
+        if (IsKeyDown(KEY_UP)) {
+            BirdY--;
+        }
+        if (IsKeyDown(KEY_DOWN)) {
+            BirdY++;
+        }
         DrawTexture(birdTex, BirdX, BirdY, WHITE);
         EndDrawing();
     }
