@@ -26,6 +26,12 @@ int main(int argc, char** argv)
         if (IsKeyDown(KEY_DOWN)) {
             BirdY++;
         }
+        if (IsKeyDown(KEY_RIGHT)) {
+            BirdX++;
+        }
+        if(IsKeyDown(KEY_LEFT)) {
+            BirdX--;
+        }
         DrawTexture(birdTex, BirdX, BirdY, WHITE);
         EndDrawing();
     }
