@@ -13,6 +13,8 @@ int main(int argc, char** argv)
     const int FpsValue = 60;
     SetTargetFPS(FpsValue);
 
+    Texture2D birdTex = LoadTexture("resources/bird.png");
+
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -20,7 +22,7 @@ int main(int argc, char** argv)
         const int BirdY = 225;
         const int BirdWidth = 50;
         const int BirdHeight = 20;
-        DrawRectangle(BirdX, BirdY, BirdWidth, BirdHeight, YELLOW);
+        DrawTexture(birdTex, BirdX, BirdY, WHITE);
         EndDrawing();
     }
 
