@@ -13,13 +13,14 @@ int main(int argc, char** argv)
     const int FpsValue = 60;
     SetTargetFPS(FpsValue);
 
+    Texture2D birdTex = LoadTexture("resources/bird.png");
+
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        const int FontSize = 20;
-        const int CoordinateTextX = 190;
-        const int CoordinateTextY = 200;
-        DrawText("Congrats! You created your first window!", CoordinateTextX, CoordinateTextY, FontSize, LIGHTGRAY);
+        const int BirdX = 400;
+        const int BirdY = 225;
+        DrawTexture(birdTex, BirdX, BirdY, WHITE);
         EndDrawing();
     }
 
