@@ -4,6 +4,7 @@ This is my flappy bird
 
 ## Requirements
 
+- conan
 - meson
 - raylib
 - gcc
@@ -12,10 +13,16 @@ This is my flappy bird
 - clang-tidy
 - cppcheck
 
+## Setup conan
+```
+ conan profile detect
+ conan install . --output-folder=build --build=missing -pr .conanprofile
+```
+
 ## Build
 
 ```
-meson setup build
+meson setup --native-file .\build\build\Release\generators\conan_meson_native.ini build
 meson compile -C build
 ```
 

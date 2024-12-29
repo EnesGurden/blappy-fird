@@ -7,9 +7,7 @@ m_dep = cc.find_library('m', required : false)
 gdi32_dep = cc.find_library('gdi32', required : false)
 winmm_dep = cc.find_library('winmm', required : false)
 
-cmake = import('cmake')
-raylib_proj = cmake.subproject('raylib')
-raylib_dep = raylib_proj.dependency('raylib')
+raylib_dep = dependency('raylib')
 
 exe = executable('blappy-fird', 'src/main.c',
 dependencies: [raylib_dep, m_dep, gdi32_dep, winmm_dep], install : true)

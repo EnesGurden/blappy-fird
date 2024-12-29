@@ -14,14 +14,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache build env
+        id: cache-env
+        uses: actions/cache@v4
+        with:
+          path: |
+            $env:USERPROFILE\\env-build
+            $env:USERPROFILE\\choco
+            $env:USERPROFILE\\.conan2
+
+          key: ${{ runner.os }}
+          restore-keys: ${{ runner.os }}
+          enableCrossOsArchive: true
+
       # Set up venv
       - name: Set up venv
         run: |
-          choco install python --version 3.13.1
-          python3.13.exe -m venv env-build
-          python3.13.exe -m venv env-build
-          . .\env-build\Scripts\Activate.ps1
-          pip install cmake ninja meson cppcheck
+          choco config set --name="'cacheLocation'" --value="$env:USERPROFILE\choco"
+          python3.exe -m venv $env:USERPROFILE\env-build
+          . $env:USERPROFILE\env-build\Scripts\Activate.ps1
+          pip install ninja meson conan cppcheck
 
       # Set up MinGW64 environment
       - name: Set up MinGW64
@@ -40,14 +52,16 @@ jobs:
       # Build the project
       - name: Build
         run: |
-          . .\env-build\Scripts\Activate.ps1
-          meson.exe setup build
-          meson.exe compile -C build
+          . $env:USERPROFILE\env-build\Scripts\Activate.ps1
+          conan profile detect
+          conan install . --output-folder=build --build=missing -pr .conanprofile
+          meson setup --native-file .\build\build\Release\generators\conan_meson_native.ini build 
+          meson compile -C build
 
       # Lint the code
       - name: Lint
         run: |
-          . .\env-build\Scripts\Activate.ps1
+          . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIncludeSystem --inconclusive --quiet --error-exitcode=1
           clang-tidy --config-file=.clang-tidy -p .\build src/*.c
 
