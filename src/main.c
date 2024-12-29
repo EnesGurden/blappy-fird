@@ -15,8 +15,8 @@ int main(int argc, char** argv)
 
     Texture2D birdTex = LoadTexture("resources/bird.png");
     Vector2 bird = { .x = 400, .y = 225 };
-    const Rectangle ObstacleUp = { .height = 150, .width = 150, .x = 400, .y = 0 };
-    const Rectangle ObstacleDown = { .height = 150, .width = 150, .x = 400, .y = 350 };
+    Rectangle ObstacleUp = { .height = 150, .width = 150, .x = 400, .y = 0 };
+    Rectangle ObstacleDown = { .height = 150, .width = 150, .x = 400, .y = 350 };
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -24,13 +24,13 @@ int main(int argc, char** argv)
         if (IsKeyDown(KEY_UP)) {
             bird.y -= 2;
         }
-        if (IsKeyDown(KEY_RIGHT)) {
-            bird.x++;
-        }
-        if (IsKeyDown(KEY_LEFT)) {
-            bird.x--;
-        }
         bird.y++;
+        ObstacleUp.x--;
+        ObstacleDown.x--;
+        if (ObstacleUp.x == -ObstacleUp.width) {
+            ObstacleUp.x = ScreenWidth;
+            ObstacleDown.x = ScreenWidth;
+        }
         DrawRectangleRec(ObstacleUp, GREEN);
         DrawRectangleRec(ObstacleDown, GREEN);
         DrawTexture(birdTex, bird.x, bird.y, WHITE);
