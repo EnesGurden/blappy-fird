@@ -14,9 +14,16 @@ int main(int argc, char** argv)
     SetTargetFPS(FpsValue);
 
     Texture2D birdTex = LoadTexture("resources/bird.png");
-    Vector2 bird = { .x = 400, .y = 225 };
-    Rectangle ObstacleUp = { .height = 150, .width = 150, .x = 400, .y = 0 };
-    Rectangle ObstacleDown = { .height = 150, .width = 150, .x = 400, .y = 350 };
+    const int BirdInitialX = 400;
+    const int BirdInitialY = 225;
+    const int ObstacleUpDownInitHeight = 150;
+    const int ObstacleUpDownInitWidth = 150;
+    const int ObstacleUpDownInitX = 400;
+    const int ObstacleUpInitY = 0;
+    const int ObstacleDownInitY = 350;
+    Vector2 bird = { .x = BirdInitialX, .y = BirdInitialY };
+    Rectangle ObstacleUp = { .height = ObstacleUpDownInitHeight, .width = ObstacleUpDownInitWidth, .x = ObstacleUpDownInitX, .y = ObstacleUpInitY };
+    Rectangle ObstacleDown = { .height = ObstacleUpDownInitHeight, .width = ObstacleUpDownInitWidth, .x = ObstacleUpDownInitX, .y = ObstacleDownInitY };
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -36,7 +43,12 @@ int main(int argc, char** argv)
         DrawTexture(birdTex, bird.x, bird.y, WHITE);
         Vector2 kusCenter = { .x = bird.x + birdTex.width / 2, .y = bird.y + birdTex.height / 2 };
         if (CheckCollisionCircleRec(kusCenter, birdTex.height / 2, ObstacleDown) || CheckCollisionCircleRec(kusCenter, birdTex.height / 2, ObstacleUp)) {
-            DrawText("GAME OVER!", 62, 62, 62, BLACK);
+            bird.x = BirdInitialX;
+            bird.y = BirdInitialY;
+            ObstacleUp.x = ObstacleUpDownInitX;
+            ObstacleUp.y = ObstacleUpInitY;
+            ObstacleDown.x = ObstacleUpDownInitX;
+            ObstacleDown.y = ObstacleDownInitY;
         }
 
         EndDrawing();
