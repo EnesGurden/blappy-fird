@@ -16,11 +16,11 @@ int main(int argc, char** argv)
     Texture2D birdTex = LoadTexture("resources/bird.png");
     const int BirdInitialX = 400;
     const int BirdInitialY = 225;
-    const int ObstacleUpDownInitHeight = 150;
+    const int ObstacleUpDownInitHeight = GetRandomValue(0, 150);
     const int ObstacleUpDownInitWidth = 150;
     const int ObstacleUpDownInitX = 400;
     const int ObstacleUpInitY = 0;
-    const int ObstacleDownInitY = 350;
+    const int ObstacleDownInitY = ScreenHeight - ObstacleUpDownInitHeight;
     Vector2 bird = { .x = BirdInitialX, .y = BirdInitialY };
     Rectangle ObstacleUp = { .height = ObstacleUpDownInitHeight, .width = ObstacleUpDownInitWidth, .x = ObstacleUpDownInitX, .y = ObstacleUpInitY };
     Rectangle ObstacleDown = { .height = ObstacleUpDownInitHeight, .width = ObstacleUpDownInitWidth, .x = ObstacleUpDownInitX, .y = ObstacleDownInitY };
