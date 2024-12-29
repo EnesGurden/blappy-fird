@@ -14,23 +14,31 @@ int main(int argc, char** argv)
     SetTargetFPS(FpsValue);
 
     Texture2D birdTex = LoadTexture("resources/bird.png");
-    int BirdX = 400;
-    int BirdY = 225;
+    Vector2 bird = { .x = 400, .y = 225 };
+    const Rectangle ObstacleUp = { .height = 150, .width = 150, .x = 400, .y = 0 };
+    const Rectangle ObstacleDown = { .height = 150, .width = 150, .x = 400, .y = 350 };
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(SKYBLUE);
         if (IsKeyDown(KEY_UP)) {
-            BirdY-=2;
+            bird.y -= 2;
         }
         if (IsKeyDown(KEY_RIGHT)) {
-            BirdX++;
+            bird.x++;
         }
-        if(IsKeyDown(KEY_LEFT)) {
-            BirdX--;
+        if (IsKeyDown(KEY_LEFT)) {
+            bird.x--;
         }
-        BirdY++;
-        DrawTexture(birdTex, BirdX, BirdY, WHITE);
+        bird.y++;
+        DrawRectangleRec(ObstacleUp, GREEN);
+        DrawRectangleRec(ObstacleDown, GREEN);
+        DrawTexture(birdTex, bird.x, bird.y, WHITE);
+        Vector2 kusCenter = { .x = bird.x + birdTex.width / 2, .y = bird.y + birdTex.height / 2 };
+        if (CheckCollisionCircleRec(kusCenter, birdTex.height / 2, ObstacleDown) || CheckCollisionCircleRec(kusCenter, birdTex.height / 2, ObstacleUp)) {
+            DrawText("GAME OVER!", 62, 62, 62, BLACK);
+        }
+
         EndDrawing();
     }
 
