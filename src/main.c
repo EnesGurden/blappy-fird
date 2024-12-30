@@ -1,12 +1,32 @@
 #include <raylib.h>
 
 #define PROJECT_NAME "blappy-fird"
+typedef struct {
+    Rectangle top;
+    Rectangle bottom;
+} Obstacle;
+
+const int ObstacleTopY = 0;
+const int ObstacleWidth = 100;
+
+void ResetObstacle(Obstacle* obstacle, float startX, float screenHeight, float gapHeight)
+{
+    obstacle->top.height = GetRandomValue(gapHeight / 2, screenHeight - gapHeight * 2);
+    obstacle->top.width = ObstacleWidth;
+    obstacle->top.x = startX;
+    obstacle->top.y = ObstacleTopY;
+
+    obstacle->bottom.height = screenHeight - obstacle->top.height - gapHeight;
+    obstacle->bottom.width = ObstacleWidth;
+    obstacle->bottom.x = startX;
+    obstacle->bottom.y = screenHeight - obstacle->bottom.height;
+}
 
 int main(int argc, char** argv)
 {
     (void)argc;
     (void)argv;
-    const int ScreenWidth = 800;
+    const int ScreenWidth = 900;
     const int ScreenHeight = 450;
     InitWindow(ScreenWidth, ScreenHeight, PROJECT_NAME);
 
@@ -16,43 +36,47 @@ int main(int argc, char** argv)
     Texture2D birdTex = LoadTexture("resources/bird.png");
     const int BirdInitialX = 300;
     const int BirdInitialY = 225;
-    const int ObstacleDistanceHeight = 100;
-    const int ObstacleUpInitHeight = GetRandomValue(ObstacleDistanceHeight / 2, ScreenHeight - ObstacleDistanceHeight * 2);
-    const int ObstacleDownInitHeight = ScreenHeight - ObstacleUpInitHeight - ObstacleDistanceHeight;
-    const int ObstacleUpDownInitWidth = 150;
-    const int ObstacleUpDownInitX = 600;
-    const int ObstacleUpInitY = 0;
-    const int ObstacleDownInitY = ObstacleDistanceHeight + ObstacleUpInitHeight;
     Vector2 bird = { .x = BirdInitialX, .y = BirdInitialY };
-    Rectangle ObstacleUp = { .height = ObstacleUpInitHeight, .width = ObstacleUpDownInitWidth, .x = ObstacleUpDownInitX, .y = ObstacleUpInitY };
-    Rectangle ObstacleDown = { .height = ObstacleDownInitHeight, .width = ObstacleUpDownInitWidth, .x = ObstacleUpDownInitX, .y = ObstacleDownInitY };
 
+    const int ObstacleGap = 100; // vertical
+    const int ObstacleSpacing = 100; // horizontal
+    const int NumObstacles = 5;
+    Obstacle obstacles[NumObstacles];
+    for (int i = 0; i < NumObstacles; i++) {
+        ResetObstacle(&obstacles[i], ScreenWidth + i * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
+    }
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(SKYBLUE);
         if (IsKeyDown(KEY_UP)) {
             bird.y -= 2;
         }
-        bird.y++;
-        ObstacleUp.x--;
-        ObstacleDown.x--;
-        if (ObstacleUp.x == -ObstacleUp.width) {
-            ObstacleUp.x = ScreenWidth;
-            ObstacleDown.x = ScreenWidth;
-        }
-        DrawRectangleRec(ObstacleUp, GREEN);
-        DrawRectangleRec(ObstacleDown, GREEN);
-        DrawTexture(birdTex, bird.x, bird.y, WHITE);
-        Vector2 kusCenter = { .x = bird.x + birdTex.width / 2, .y = bird.y + birdTex.height / 2 };
-        if (CheckCollisionCircleRec(kusCenter, birdTex.height / 2, ObstacleDown) || CheckCollisionCircleRec(kusCenter, birdTex.height / 2, ObstacleUp)) {
-            bird.x = BirdInitialX;
-            bird.y = BirdInitialY;
-            ObstacleUp.x = ObstacleUpDownInitX;
-            ObstacleUp.y = ObstacleUpInitY;
-            ObstacleDown.x = ObstacleUpDownInitX;
-            ObstacleDown.y = ObstacleDownInitY;
+        bird.y += 1;
+
+        for (int i = 0; i < NumObstacles; i++) {
+            obstacles[i].top.x--;
+            obstacles[i].bottom.x--;
+            if (obstacles[i].top.x == -obstacles[i].top.width) {
+                ResetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
+            }
         }
 
+        Vector2 birdCenter = { .x = bird.x + birdTex.width / 2, .y = bird.y + birdTex.height / 2 };
+        for (int i = 0; i < NumObstacles; i++) {
+            if (CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
+                bird.x = BirdInitialX;
+                bird.y = BirdInitialY;
+                for (int j = 0; j < NumObstacles; j++) {
+                    ResetObstacle(&obstacles[j], ScreenWidth + j * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
+                }
+            }
+        }
+
+        BeginDrawing();
+        ClearBackground(SKYBLUE);
+        for (int i = 0; i < NumObstacles; i++) {
+            DrawRectangleRec(obstacles[i].top, GREEN);
+            DrawRectangleRec(obstacles[i].bottom, GREEN);
+        }
+        DrawTexture(birdTex, bird.x, bird.y, WHITE);
         EndDrawing();
     }
 
