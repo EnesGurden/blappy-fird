@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <stdio.h>
 
 #define PROJECT_NAME "blappy-fird"
 typedef struct {
@@ -45,6 +46,9 @@ int main(int argc, char** argv)
     for (int i = 0; i < NumObstacles; i++) {
         ResetObstacle(&obstacles[i], ScreenWidth + i * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
     }
+
+    int score = 0;
+    char scoreText[20];
     while (!WindowShouldClose()) {
         if (IsKeyDown(KEY_UP)) {
             bird.y -= 2;
@@ -57,6 +61,10 @@ int main(int argc, char** argv)
             if (obstacles[i].top.x == -obstacles[i].top.width) {
                 ResetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
             }
+            if (obstacles[i].top.x + ObstacleWidth == bird.x) {
+                score++;
+            }
+            snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score);
         }
 
         Vector2 birdCenter = { .x = bird.x + birdTex.width / 2, .y = bird.y + birdTex.height / 2 };
@@ -67,6 +75,7 @@ int main(int argc, char** argv)
                 for (int j = 0; j < NumObstacles; j++) {
                     ResetObstacle(&obstacles[j], ScreenWidth + j * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
                 }
+                score = 0;
             }
         }
 
@@ -77,6 +86,7 @@ int main(int argc, char** argv)
             DrawRectangleRec(obstacles[i].bottom, GREEN);
         }
         DrawTexture(birdTex, bird.x, bird.y, WHITE);
+        DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
         EndDrawing();
     }
 
