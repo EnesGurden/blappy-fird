@@ -1,3 +1,4 @@
+#include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 
@@ -7,7 +8,14 @@ typedef struct {
     Rectangle bottom;
 } Obstacle;
 
-const int ObstacleTopY = 0;
+typedef struct
+{
+    Vector2 pos;
+    float speedY;
+} Bird;
+
+const int ObstacleTopY
+    = 0;
 const int ObstacleWidth = 100;
 
 void ResetObstacle(Obstacle* obstacle, float startX, float screenHeight, float gapHeight)
@@ -37,10 +45,10 @@ int main(int argc, char** argv)
     Texture2D birdTex = LoadTexture("resources/bird.png");
     const int BirdInitialX = 300;
     const int BirdInitialY = 225;
-    Vector2 bird = { .x = BirdInitialX, .y = BirdInitialY };
+    Bird bird = { .pos = { .x = BirdInitialX, .y = BirdInitialY }, .speedY = 0 };
 
-    const int ObstacleGap = 100; // vertical
-    const int ObstacleSpacing = 100; // horizontal
+    const int ObstacleGap = 150;
+    const int ObstacleSpacing = 150;
     const int NumObstacles = 5;
     Obstacle obstacles[NumObstacles];
     for (int i = 0; i < NumObstacles; i++) {
@@ -49,33 +57,42 @@ int main(int argc, char** argv)
 
     int score = 0;
     char scoreText[20];
+    const float MaxHeightTime = 0.5;
+    const float MaxHeight = ObstacleWidth + ObstacleSpacing / 2;
+    const float Gravity = 2 * MaxHeight / MaxHeightTime / MaxHeightTime;
+    const float ObstacleSpeed = 2.5;
+    float dt = 1.0 / 60.0;
     while (!WindowShouldClose()) {
-        if (IsKeyDown(KEY_UP)) {
-            bird.y -= 2;
+        if (IsKeyPressed(KEY_UP)) {
+            bird.speedY = -sqrt(Gravity * MaxHeight);
         }
-        bird.y += 1;
+
+        bird.pos.y = bird.pos.y + bird.speedY * dt;
+        bird.speedY = bird.speedY + Gravity * dt;
+        printf("x:%10.2f y:%10.2f v:%10.2f\n g:%10.2f", bird.pos.x, bird.pos.y, bird.speedY, Gravity);
 
         for (int i = 0; i < NumObstacles; i++) {
-            obstacles[i].top.x--;
-            obstacles[i].bottom.x--;
+            obstacles[i].top.x -= ObstacleSpeed;
+            obstacles[i].bottom.x -= ObstacleSpeed;
             if (obstacles[i].top.x == -obstacles[i].top.width) {
                 ResetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
             }
-            if (obstacles[i].top.x + ObstacleWidth == bird.x) {
+            if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
                 score++;
             }
             snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score);
         }
 
-        Vector2 birdCenter = { .x = bird.x + birdTex.width / 2, .y = bird.y + birdTex.height / 2 };
+        Vector2 birdCenter = { .x = bird.pos.x + birdTex.width / 2, .y = bird.pos.y + birdTex.height / 2 };
         for (int i = 0; i < NumObstacles; i++) {
-            if (CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
-                bird.x = BirdInitialX;
-                bird.y = BirdInitialY;
+            if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
+                bird.pos.x = BirdInitialX;
+                bird.pos.y = BirdInitialY;
                 for (int j = 0; j < NumObstacles; j++) {
                     ResetObstacle(&obstacles[j], ScreenWidth + j * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
                 }
                 score = 0;
+                bird.speedY = 0;
             }
         }
 
@@ -85,7 +102,7 @@ int main(int argc, char** argv)
             DrawRectangleRec(obstacles[i].top, GREEN);
             DrawRectangleRec(obstacles[i].bottom, GREEN);
         }
-        DrawTexture(birdTex, bird.x, bird.y, WHITE);
+        DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
         DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
         EndDrawing();
     }
