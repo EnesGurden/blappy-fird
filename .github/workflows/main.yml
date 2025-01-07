@@ -63,14 +63,14 @@ jobs:
         run: |
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIncludeSystem --inconclusive --quiet --error-exitcode=1
-          clang-tidy --config-file=.clang-tidy -p .\build src/*.c
+          clang-tidy --config-file=.clang-tidy --warnings-as-errors -p .\build src/*.c
 
       # Package the build output
       - name: Package build artifacts
         run: |
           makensis config.nsi
           mkdir package
-          cp BlappyFirdInstaller.exe package/
+          cp blappy-fird-installer-1.0.0.exe package/
         shell: bash
 
       # Upload package as an artifact

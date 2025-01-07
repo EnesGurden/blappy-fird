@@ -74,7 +74,6 @@ int main(int argc, char** argv)
 
         bird.pos.y = bird.pos.y + bird.speedY * dt;
         bird.speedY = bird.speedY + Gravity * dt;
-        printf("x:%10.2f y:%10.2f v:%10.2f\n g:%10.2f", bird.pos.x, bird.pos.y, bird.speedY, Gravity);
 
         for (int i = 0; i < NumObstacles; i++) {
             obstacles[i].top.x -= ObstacleSpeed;
@@ -121,6 +120,47 @@ int main(int argc, char** argv)
         DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
         DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
 
+        const char* MenuOptions[] = { "Start Game", "Options", "About", "Exit" };
+        const int MenuOptionsNumber = sizeof(MenuOptions) / sizeof(MenuOptions[0]);
+        const int MenuFontSize = 20;
+        const int MenuVerticalSpace = 40;
+        const int MenuInitialY = 175;
+        enum Menu {
+            SCREENHOME,
+            SCREENOPTIONS,
+            SCREENABOUT,
+            SCREENEXIT
+        };
+        static int menuIndex = 0;
+        static int selectedMenuIndex = 0;
+        switch (selectedMenuIndex) {
+        case SCREENHOME:
+            if (IsKeyPressed(KEY_UP)) {
+                menuIndex--;
+                if (menuIndex < 0)
+                    menuIndex = MenuOptionsNumber - 1;
+            }
+            if (IsKeyPressed(KEY_DOWN)) {
+                menuIndex++;
+                if (menuIndex == MenuOptionsNumber)
+                    menuIndex = 0;
+            }
+            if (IsKeyPressed(KEY_ENTER)) {
+                selectedMenuIndex = menuIndex;
+            }
+            for (int i = 0; i < MenuOptionsNumber; i++) {
+                Color color = (i == menuIndex) ? YELLOW : DARKGRAY;
+                DrawText(MenuOptions[i], ScreenWidth / 2 - MeasureText(MenuOptions[i], MenuFontSize) / 2, MenuInitialY + i * MenuVerticalSpace, MenuFontSize, color);
+            }
+            break;
+
+        default:
+            break;
+        }
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            menuIndex = SCREENHOME;
+            selectedMenuIndex = SCREENHOME;
+        }
         EndDrawing();
     }
 
