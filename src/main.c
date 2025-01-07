@@ -68,59 +68,118 @@ int main(int argc, char** argv)
     const int RoundedWidth = ObstacleWidth + 10;
     const int Segment = 6;
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_UP)) {
-            bird.speedY = -sqrt(Gravity * MaxHeight);
-        }
-
-        bird.pos.y = bird.pos.y + bird.speedY * dt;
-        bird.speedY = bird.speedY + Gravity * dt;
-        printf("x:%10.2f y:%10.2f v:%10.2f\n g:%10.2f", bird.pos.x, bird.pos.y, bird.speedY, Gravity);
-
-        for (int i = 0; i < NumObstacles; i++) {
-            obstacles[i].top.x -= ObstacleSpeed;
-            obstacles[i].bottom.x -= ObstacleSpeed;
-            if (obstacles[i].top.x == -obstacles[i].top.width) {
-                ResetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
-            }
-            if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
-                score++;
-            }
-            snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score);
-        }
-
-        Vector2 birdCenter = { .x = bird.pos.x + birdTex.width / 2, .y = bird.pos.y + birdTex.height / 2 };
-        for (int i = 0; i < NumObstacles; i++) {
-            if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
-                bird.pos.x = BirdInitialX;
-                bird.pos.y = BirdInitialY;
-                for (int j = 0; j < NumObstacles; j++) {
-                    ResetObstacle(&obstacles[j], ScreenWidth + j * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
-                }
-                score = 0;
-                bird.speedY = 0;
-            }
-        }
-
         BeginDrawing();
         ClearBackground(SKYBLUE);
-        for (int i = 0; i < NumObstacles; i++) {
-            DrawRectangleRec(obstacles[i].top, GREEN);
-            DrawRectangleRec(obstacles[i].bottom, GREEN);
 
-            Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].top.height - RoundedHeight };
-            DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
-            DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
-            DrawLine(obstacles[i].top.x, obstacles[i].top.y, obstacles[i].top.x, obstacles[i].top.height - borderRoundedTop.height, BLACK);
-            DrawLine(obstacles[i].top.x + ObstacleWidth, obstacles[i].top.y, obstacles[i].top.x + ObstacleWidth, obstacles[i].top.height - borderRoundedTop.height, BLACK);
-            Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].bottom.y };
-            DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
-            DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
-            DrawLine(obstacles[i].bottom.x, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x, ScreenHeight, BLACK);
-            DrawLine(obstacles[i].bottom.x + ObstacleWidth, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x + ObstacleWidth, ScreenHeight, BLACK);
+        const char* MenuOptions[] = { "Start Game", "About", "Exit" };
+        const int MenuOptionsNumber = sizeof(MenuOptions) / sizeof(MenuOptions[0]);
+        const int MenuFontSize = 20;
+        const int MenuVerticalSpace = 40;
+        const int MenuInitialY = 175;
+        enum Menu {
+            SCREENHOME,
+            SCREENABOUT,
+            SCREENEXIT,
+            SCREENGAME
+        };
+        static int menuIndex = 0;
+        static int selectedMenuIndex = 0;
+
+        switch (selectedMenuIndex) {
+        case SCREENHOME:
+            if (IsKeyPressed(KEY_UP)) {
+                menuIndex--;
+                if (menuIndex < 0)
+                    menuIndex = MenuOptionsNumber - 1;
+            }
+            if (IsKeyPressed(KEY_DOWN)) {
+                menuIndex++;
+                if (menuIndex == MenuOptionsNumber)
+                    menuIndex = 0;
+            }
+            if (IsKeyPressed(KEY_ENTER)) {
+                selectedMenuIndex = menuIndex;
+                if (selectedMenuIndex == 0) {
+                    selectedMenuIndex = SCREENGAME;
+                } else {
+                    menuIndex = 0;
+                }
+            }
+            for (int i = 0; i < MenuOptionsNumber; i++) {
+                Color color = (i == menuIndex) ? YELLOW : DARKGRAY;
+                DrawText(MenuOptions[i], ScreenWidth / 2 - MeasureText(MenuOptions[i], MenuFontSize) / 2, MenuInitialY + i * MenuVerticalSpace, MenuFontSize, color);
+            }
+            break;
+        case SCREENABOUT:
+            DrawText("DEVELOPERS\0}", 250, 50, 50, DARKBLUE);
+            DrawText("Abdulkerim ELMAS\nEnes GURDEN\0}", 225, 115, 30, LIGHTGRAY);
+            DrawText("VERSION\0}", 250, 230, 50, DARKBLUE);
+            DrawText("1.0.0\0}", 240, 295, 30, LIGHTGRAY);
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                selectedMenuIndex = SCREENHOME;
+            }
+            break;
+        case SCREENEXIT:
+            CloseWindow(); // ask senior WARNING: GLFW: Error: 65537 Description: The GLFW library is not initialized
+            break;
+        case SCREENGAME:
+            if (IsKeyPressed(KEY_UP)) {
+                bird.speedY = -sqrt(Gravity * MaxHeight);
+            }
+
+            bird.pos.y = bird.pos.y + bird.speedY * dt;
+            bird.speedY = bird.speedY + Gravity * dt;
+
+            for (int i = 0; i < NumObstacles; i++) {
+                obstacles[i].top.x -= ObstacleSpeed;
+                obstacles[i].bottom.x -= ObstacleSpeed;
+                if (obstacles[i].top.x == -obstacles[i].top.width) {
+                    ResetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
+                }
+                if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
+                    score++;
+                }
+                snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score);
+            }
+
+            Vector2 birdCenter = { .x = bird.pos.x + birdTex.width / 2, .y = bird.pos.y + birdTex.height / 2 };
+            for (int i = 0; i < NumObstacles; i++) {
+                if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
+                    bird.pos.x = BirdInitialX;
+                    bird.pos.y = BirdInitialY;
+                    for (int j = 0; j < NumObstacles; j++) {
+                        ResetObstacle(&obstacles[j], ScreenWidth + j * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
+                    }
+                    score = 0;
+                    bird.speedY = 0;
+                }
+            }
+
+            for (int i = 0; i < NumObstacles; i++) {
+                DrawRectangleRec(obstacles[i].top, GREEN);
+                DrawRectangleRec(obstacles[i].bottom, GREEN);
+
+                Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].top.height - RoundedHeight };
+                DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
+                DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
+                DrawLine(obstacles[i].top.x, obstacles[i].top.y, obstacles[i].top.x, obstacles[i].top.height - borderRoundedTop.height, BLACK);
+                DrawLine(obstacles[i].top.x + ObstacleWidth, obstacles[i].top.y, obstacles[i].top.x + ObstacleWidth, obstacles[i].top.height - borderRoundedTop.height, BLACK);
+                Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].bottom.y };
+                DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
+                DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
+                DrawLine(obstacles[i].bottom.x, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x, ScreenHeight, BLACK);
+                DrawLine(obstacles[i].bottom.x + ObstacleWidth, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x + ObstacleWidth, ScreenHeight, BLACK);
+            }
+            DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
+            DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
+            break;
+        default:
+            break;
         }
-        DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
-        DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
-
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            menuIndex = SCREENHOME;
+            selectedMenuIndex = SCREENHOME;
+        }
         EndDrawing();
     }
 
