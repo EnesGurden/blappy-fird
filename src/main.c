@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
     const int ObstacleGap = 150;
     const int ObstacleSpacing = 150;
-    const int NumObstacles = 5;
+    const int NumObstacles = 4;
     Obstacle obstacles[NumObstacles];
     for (int i = 0; i < NumObstacles; i++) {
         ResetObstacle(&obstacles[i], ScreenWidth + i * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
@@ -62,6 +62,11 @@ int main(int argc, char** argv)
     const float Gravity = 2 * MaxHeight / MaxHeightTime / MaxHeightTime;
     const float ObstacleSpeed = 2.5;
     float dt = 1.0 / 60.0;
+    const float ThicknessRound = 0.5;
+    const float ThicknessLine = 0.3;
+    const int RoundedHeight = 20;
+    const int RoundedWidth = ObstacleWidth + 10;
+    const int Segment = 6;
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_UP)) {
             bird.speedY = -sqrt(Gravity * MaxHeight);
@@ -101,9 +106,21 @@ int main(int argc, char** argv)
         for (int i = 0; i < NumObstacles; i++) {
             DrawRectangleRec(obstacles[i].top, GREEN);
             DrawRectangleRec(obstacles[i].bottom, GREEN);
+
+            Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].top.height - RoundedHeight };
+            DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
+            DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
+            DrawLine(obstacles[i].top.x, obstacles[i].top.y, obstacles[i].top.x, obstacles[i].top.height - borderRoundedTop.height, BLACK);
+            DrawLine(obstacles[i].top.x + ObstacleWidth, obstacles[i].top.y, obstacles[i].top.x + ObstacleWidth, obstacles[i].top.height - borderRoundedTop.height, BLACK);
+            Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].bottom.y };
+            DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
+            DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
+            DrawLine(obstacles[i].bottom.x, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x, ScreenHeight, BLACK);
+            DrawLine(obstacles[i].bottom.x + ObstacleWidth, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x + ObstacleWidth, ScreenHeight, BLACK);
         }
         DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
         DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
+
         EndDrawing();
     }
 
