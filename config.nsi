@@ -1,6 +1,6 @@
 ; Define the name and output of the installer
 Name "Blappy Fird"
-OutFile "BlappyFirdInstaller.exe"
+OutFile "blappy-fird-installer-1.0.0.exe"
 
 ; Define the default installation directory
 InstallDir "$PROGRAMFILES\BlappyFird"

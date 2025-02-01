@@ -70,12 +70,12 @@ jobs:
         run: |
           makensis config.nsi
           mkdir package
-          cp BlappyFirdInstaller.exe package/
+          cp blappy-fird-installer-1.0.0.exe package/
         shell: bash
 
       # Upload package as an artifact
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Installer-Package
           path: package/
