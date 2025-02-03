@@ -18,9 +18,9 @@ const int ObstacleTopY
     = 0;
 const int ObstacleWidth = 100;
 
-void ResetObstacle(Obstacle* obstacle, float startX, float screenHeight, float gapHeight)
+void resetObstacle(Obstacle* obstacle, float startX, float screenHeight, float gapHeight)
 {
-    obstacle->top.height = GetRandomValue(gapHeight / 2, screenHeight - gapHeight * 2);
+    obstacle->top.height = GetRandomValue(gapHeight / 2, screenHeight - (gapHeight * 2));
     obstacle->top.width = ObstacleWidth;
     obstacle->top.x = startX;
     obstacle->top.y = ObstacleTopY;
@@ -52,13 +52,13 @@ int main(int argc, char** argv)
     const int NumObstacles = 4;
     Obstacle obstacles[NumObstacles];
     for (int i = 0; i < NumObstacles; i++) {
-        ResetObstacle(&obstacles[i], ScreenWidth + i * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
+        resetObstacle(&obstacles[i], ScreenWidth + (i * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap);
     }
 
     int score = 0;
     char scoreText[20];
     const float MaxHeightTime = 0.5;
-    const float MaxHeight = ObstacleWidth + ObstacleSpacing / 2;
+    const float MaxHeight = ObstacleWidth + (ObstacleSpacing / 2);
     const float Gravity = 2 * MaxHeight / MaxHeightTime / MaxHeightTime;
     const float ObstacleSpeed = 2.5;
     float dt = 1.0 / 60.0;
@@ -71,8 +71,8 @@ int main(int argc, char** argv)
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
-        const char* MenuOptions[] = { "Start Game", "About", "Exit" };
-        const int MenuOptionsNumber = sizeof(MenuOptions) / sizeof(MenuOptions[0]);
+        const char* menuOptions[] = { "Start Game", "About", "Exit" };
+        const int MenuOptionsNumber = sizeof(menuOptions) / sizeof(menuOptions[0]);
         const int MenuFontSize = 20;
         const int MenuVerticalSpace = 40;
         const int MenuInitialY = 175;
@@ -89,13 +89,15 @@ int main(int argc, char** argv)
         case SCREENHOME:
             if (IsKeyPressed(KEY_UP)) {
                 menuIndex--;
-                if (menuIndex < 0)
+                if (menuIndex < 0) {
                     menuIndex = MenuOptionsNumber - 1;
+                }
             }
             if (IsKeyPressed(KEY_DOWN)) {
                 menuIndex++;
-                if (menuIndex == MenuOptionsNumber)
+                if (menuIndex == MenuOptionsNumber) {
                     menuIndex = 0;
+                }
             }
             if (IsKeyPressed(KEY_ENTER)) {
                 selectedMenuIndex = menuIndex;
@@ -107,7 +109,7 @@ int main(int argc, char** argv)
             }
             for (int i = 0; i < MenuOptionsNumber; i++) {
                 Color color = (i == menuIndex) ? YELLOW : DARKGRAY;
-                DrawText(MenuOptions[i], ScreenWidth / 2 - MeasureText(MenuOptions[i], MenuFontSize) / 2, MenuInitialY + i * MenuVerticalSpace, MenuFontSize, color);
+                DrawText(menuOptions[i], (ScreenWidth / 2) - (MeasureText(menuOptions[i], MenuFontSize) / 2), MenuInitialY + (i * MenuVerticalSpace), MenuFontSize, color);
             }
             break;
         case SCREENABOUT:
@@ -124,7 +126,7 @@ int main(int argc, char** argv)
             break;
         case SCREENGAME:
             if (IsKeyPressed(KEY_UP)) {
-                bird.speedY = -sqrt(Gravity * MaxHeight);
+                bird.speedY = -sqrtf(Gravity * MaxHeight);
             }
 
             bird.pos.y = bird.pos.y + bird.speedY * dt;
@@ -134,7 +136,7 @@ int main(int argc, char** argv)
                 obstacles[i].top.x -= ObstacleSpeed;
                 obstacles[i].bottom.x -= ObstacleSpeed;
                 if (obstacles[i].top.x == -obstacles[i].top.width) {
-                    ResetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
+                    resetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
                 }
                 if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
                     score++;
@@ -142,13 +144,13 @@ int main(int argc, char** argv)
                 snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score);
             }
 
-            Vector2 birdCenter = { .x = bird.pos.x + birdTex.width / 2, .y = bird.pos.y + birdTex.height / 2 };
+            Vector2 birdCenter = { .x = bird.pos.x + (birdTex.width / 2), .y = bird.pos.y + (birdTex.height / 2) };
             for (int i = 0; i < NumObstacles; i++) {
                 if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
                     bird.pos.x = BirdInitialX;
                     bird.pos.y = BirdInitialY;
                     for (int j = 0; j < NumObstacles; j++) {
-                        ResetObstacle(&obstacles[j], ScreenWidth + j * (ObstacleWidth + ObstacleSpacing), ScreenHeight, ObstacleGap);
+                        resetObstacle(&obstacles[j], ScreenWidth + (j * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap);
                     }
                     score = 0;
                     bird.speedY = 0;
@@ -159,12 +161,12 @@ int main(int argc, char** argv)
                 DrawRectangleRec(obstacles[i].top, GREEN);
                 DrawRectangleRec(obstacles[i].bottom, GREEN);
 
-                Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].top.height - RoundedHeight };
+                Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - ((RoundedWidth - ObstacleWidth) / 2), .y = obstacles[i].top.height - RoundedHeight };
                 DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
                 DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
                 DrawLine(obstacles[i].top.x, obstacles[i].top.y, obstacles[i].top.x, obstacles[i].top.height - borderRoundedTop.height, BLACK);
                 DrawLine(obstacles[i].top.x + ObstacleWidth, obstacles[i].top.y, obstacles[i].top.x + ObstacleWidth, obstacles[i].top.height - borderRoundedTop.height, BLACK);
-                Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - (RoundedWidth - ObstacleWidth) / 2, .y = obstacles[i].bottom.y };
+                Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - ((RoundedWidth - ObstacleWidth) / 2), .y = obstacles[i].bottom.y };
                 DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
                 DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
                 DrawLine(obstacles[i].bottom.x, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x, ScreenHeight, BLACK);
