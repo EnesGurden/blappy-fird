@@ -42,7 +42,7 @@ int main(int argc, char** argv)
     const int FpsValue = 60;
     SetTargetFPS(FpsValue);
 
-    Texture2D birdTex = LoadTexture("resources/bird.png");
+    Texture2D birdTex = LoadTexture("bird.png");
     const int BirdInitialX = 300;
     const int BirdInitialY = 225;
     Bird bird = { .pos = { .x = BirdInitialX, .y = BirdInitialY }, .speedY = 0 };
