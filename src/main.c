@@ -55,13 +55,15 @@ int main(int argc, char** argv)
         resetObstacle(&obstacles[i], ScreenWidth + (i * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap);
     }
 
+    const float Half = 2.0F;
     int score = 0;
-    char scoreText[20];
+    const int ScoreBufferCount = 20;
+    char scoreText[ScoreBufferCount];
     const float MaxHeightTime = 0.5;
-    const float MaxHeight = ObstacleWidth + (ObstacleSpacing / 2);
+    const float MaxHeight = ObstacleWidth + (ObstacleSpacing / Half);
     const float Gravity = 2 * MaxHeight / MaxHeightTime / MaxHeightTime;
     const float ObstacleSpeed = 2.5;
-    float dt = 1.0 / 60.0;
+    float deltaT = 1.0 / (float)FpsValue;
     const float ThicknessRound = 0.5;
     const float ThicknessLine = 0.3;
     const int RoundedHeight = 20;
@@ -112,15 +114,27 @@ int main(int argc, char** argv)
                 DrawText(menuOptions[i], (ScreenWidth / 2) - (MeasureText(menuOptions[i], MenuFontSize) / 2), MenuInitialY + (i * MenuVerticalSpace), MenuFontSize, color);
             }
             break;
-        case SCREENABOUT:
-            DrawText("DEVELOPERS\0}", 250, 50, 50, DARKBLUE);
-            DrawText("Abdulkerim ELMAS\nEnes GURDEN\0}", 225, 115, 30, LIGHTGRAY);
-            DrawText("VERSION\0}", 250, 230, 50, DARKBLUE);
-            DrawText("1.0.0\0}", 240, 295, 30, LIGHTGRAY);
+        case SCREENABOUT: {
+            const int DevelopersTextPosX = 250;
+            const int DevelopersTextPosY = 50;
+            const int DevelopersTextFontSize = 50;
+            const int DevelopersPosX = 225;
+            const int DevelopersPosY = 115;
+            const int DevelopersFontSize = 30;
+            const int VersionTextPosX = 250;
+            const int VersionTextPosY = 230;
+            const int VersionTextFontSize = 50;
+            const int VersionPosX = 240;
+            const int VersionPosY = 295;
+            const int VersionFontSize = 30;
+            DrawText("DEVELOPERS\0}", DevelopersTextPosX, DevelopersTextPosY, DevelopersTextFontSize, DARKBLUE);
+            DrawText("Abdulkerim ELMAS\nEnes GURDEN\0}", DevelopersPosX, DevelopersPosY, DevelopersFontSize, LIGHTGRAY);
+            DrawText("VERSION\0}", VersionTextPosX, VersionTextPosY, VersionTextFontSize, DARKBLUE);
+            DrawText("1.0.0\0}", VersionPosX, VersionPosY, VersionFontSize, LIGHTGRAY);
             if (IsKeyPressed(KEY_BACKSPACE)) {
                 selectedMenuIndex = SCREENHOME;
             }
-            break;
+        } break;
         case SCREENEXIT:
             CloseWindow(); // ask senior WARNING: GLFW: Error: 65537 Description: The GLFW library is not initialized
             break;
@@ -129,8 +143,8 @@ int main(int argc, char** argv)
                 bird.speedY = -sqrtf(Gravity * MaxHeight);
             }
 
-            bird.pos.y = bird.pos.y + bird.speedY * dt;
-            bird.speedY = bird.speedY + Gravity * dt;
+            bird.pos.y = bird.pos.y + bird.speedY * deltaT;
+            bird.speedY = bird.speedY + Gravity * deltaT;
 
             for (int i = 0; i < NumObstacles; i++) {
                 obstacles[i].top.x -= ObstacleSpeed;
@@ -141,12 +155,12 @@ int main(int argc, char** argv)
                 if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
                     score++;
                 }
-                snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score);
+                snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score); // NOLINT
             }
 
-            Vector2 birdCenter = { .x = bird.pos.x + (birdTex.width / 2), .y = bird.pos.y + (birdTex.height / 2) };
+            Vector2 birdCenter = { .x = bird.pos.x + (birdTex.width / Half), .y = bird.pos.y + (birdTex.height / Half) };
             for (int i = 0; i < NumObstacles; i++) {
-                if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / 2, obstacles[i].bottom)) {
+                if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / Half, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / Half, obstacles[i].bottom)) {
                     bird.pos.x = BirdInitialX;
                     bird.pos.y = BirdInitialY;
                     for (int j = 0; j < NumObstacles; j++) {
@@ -161,19 +175,22 @@ int main(int argc, char** argv)
                 DrawRectangleRec(obstacles[i].top, GREEN);
                 DrawRectangleRec(obstacles[i].bottom, GREEN);
 
-                Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - ((RoundedWidth - ObstacleWidth) / 2), .y = obstacles[i].top.height - RoundedHeight };
+                Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - ((RoundedWidth - ObstacleWidth) / Half), .y = obstacles[i].top.height - RoundedHeight };
                 DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
                 DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
                 DrawLine(obstacles[i].top.x, obstacles[i].top.y, obstacles[i].top.x, obstacles[i].top.height - borderRoundedTop.height, BLACK);
                 DrawLine(obstacles[i].top.x + ObstacleWidth, obstacles[i].top.y, obstacles[i].top.x + ObstacleWidth, obstacles[i].top.height - borderRoundedTop.height, BLACK);
-                Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - ((RoundedWidth - ObstacleWidth) / 2), .y = obstacles[i].bottom.y };
+                Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - ((RoundedWidth - ObstacleWidth) / Half), .y = obstacles[i].bottom.y };
                 DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
                 DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
                 DrawLine(obstacles[i].bottom.x, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x, ScreenHeight, BLACK);
                 DrawLine(obstacles[i].bottom.x + ObstacleWidth, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x + ObstacleWidth, ScreenHeight, BLACK);
             }
             DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
-            DrawText(scoreText, 350, 50, 50, LIGHTGRAY);
+            const int ScorePosX = 350;
+            const int ScorePosY = 50;
+            const int ScoreFontSize = 50;
+            DrawText(scoreText, ScorePosX, ScorePosY, ScoreFontSize, LIGHTGRAY);
             break;
         default:
             break;
