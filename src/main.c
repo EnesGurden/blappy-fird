@@ -14,6 +14,12 @@ typedef struct
     float speedY;
 } Bird;
 
+typedef struct {
+    int startX;
+    int screenHeight;
+    float gapHeight;
+} ObstacleConfig;
+
 const float Half = 2.0F;
 const int ScreenWidth = 900;
 const int ScreenHeight = 450;
@@ -57,17 +63,17 @@ enum Menu {
     SCREENGAME
 };
 
-void resetObstacle(Obstacle* obstacle, float startX, float screenHeight, float gapHeight)
+void resetObstacle(Obstacle* obstacle, ObstacleConfig config)
 {
-    obstacle->top.height = GetRandomValue(gapHeight / 2, screenHeight - (gapHeight * 2));
+    obstacle->top.height = GetRandomValue(config.gapHeight / 2, (float)config.screenHeight - (config.gapHeight * 2));
     obstacle->top.width = ObstacleWidth;
-    obstacle->top.x = startX;
+    obstacle->top.x = config.startX;
     obstacle->top.y = ObstacleTopY;
 
-    obstacle->bottom.height = screenHeight - obstacle->top.height - gapHeight;
+    obstacle->bottom.height = config.screenHeight - obstacle->top.height - config.gapHeight;
     obstacle->bottom.width = ObstacleWidth;
-    obstacle->bottom.x = startX;
-    obstacle->bottom.y = screenHeight - obstacle->bottom.height;
+    obstacle->bottom.x = config.startX;
+    obstacle->bottom.y = config.screenHeight - obstacle->bottom.height;
 }
 void initGame()
 {
@@ -77,7 +83,8 @@ void initGame()
     bird.pos.y = BirdInitialY;
     bird.speedY = 0;
     for (int i = 0; i < NUMOBSTACLES; i++) {
-        resetObstacle(&obstacles[i], ScreenWidth + (i * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap);
+        ObstacleConfig config = { ScreenWidth + (i * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap };
+        resetObstacle(&obstacles[i], config);
     }
 }
 
@@ -150,7 +157,8 @@ void gameLoop(Texture2D birdTex)
         obstacles[i].top.x -= ObstacleSpeed;
         obstacles[i].bottom.x -= ObstacleSpeed;
         if (obstacles[i].top.x == -obstacles[i].top.width) {
-            resetObstacle(&obstacles[i], ScreenWidth, ScreenHeight, ObstacleGap);
+            ObstacleConfig config = { ScreenWidth, ScreenHeight, ObstacleGap };
+            resetObstacle(&obstacles[i], config);
         }
         if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
             score++;
@@ -164,7 +172,8 @@ void gameLoop(Texture2D birdTex)
             bird.pos.x = BirdInitialX;
             bird.pos.y = BirdInitialY;
             for (int j = 0; j < NUMOBSTACLES; j++) {
-                resetObstacle(&obstacles[j], ScreenWidth + (j * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap);
+                ObstacleConfig config = { ScreenWidth + (j * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap };
+                resetObstacle(&obstacles[j], config);
             }
             score = 0;
             bird.speedY = 0;
