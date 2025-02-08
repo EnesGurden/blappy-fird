@@ -18,7 +18,7 @@ Section "MainSection"
 
     ; Copy application files
     File /r "build\blappy-fird.exe"
-    File /r "resources\bird.png"
+    File /r "bird.png"
 
     ; Create shortcuts
     CreateShortcut "$DESKTOP\BlappyFird.lnk" "$INSTDIR\blappy-fird.exe"

@@ -15,8 +15,8 @@ typedef struct
 } Bird;
 
 typedef struct {
-    int startX;
-    int screenHeight;
+    float startX;
+    float obstacleHeight;
     float gapHeight;
 } ObstacleConfig;
 
@@ -25,8 +25,8 @@ const int ScreenWidth = 900;
 const int ScreenHeight = 450;
 const int FpsValue = 60;
 
-const int BirdInitialX = 300;
-const int BirdInitialY = 225;
+const float BirdInitialX = 300.0F;
+const float BirdInitialY = 225.0F;
 Bird bird;
 
 int score = 0;
@@ -37,21 +37,21 @@ enum {
 char scoreText[SCOREBUFFERCOUNT];
 
 const int ObstacleTopY = 0;
-const int ObstacleWidth = 100;
-const int ObstacleGap = 150;
-const int ObstacleSpacing = 150;
-const float ObstacleSpeed = 2.5;
+const float ObstacleWidth = 100;
+const float ObstacleSpacing = 150;
+const float ObstacleGap = 150.0F;
+const float ObstacleSpeed = 2.5F;
 Obstacle obstacles[NUMOBSTACLES];
 
 const float MaxHeight = ObstacleWidth + (ObstacleSpacing / Half);
-const float MaxHeightTime = 0.5;
+const float MaxHeightTime = 0.5F;
 const float Gravity = 2 * MaxHeight / MaxHeightTime / MaxHeightTime;
-float deltaT = 1.0 / (float)FpsValue;
+float deltaT = 1.0F / (float)FpsValue;
 
-const float ThicknessRound = 0.5;
-const float ThicknessLine = 0.3;
-const int RoundedHeight = 20;
-const int RoundedWidth = ObstacleWidth + 10;
+const float ThicknessRound = 0.5F;
+const float ThicknessLine = 0.3F;
+const float RoundedHeight = 20;
+const float RoundedWidth = ObstacleWidth + 10;
 const int Segment = 6;
 
 int menuIndex = 0;
@@ -65,15 +65,15 @@ enum Menu {
 
 void resetObstacle(Obstacle* obstacle, ObstacleConfig config)
 {
-    obstacle->top.height = GetRandomValue(config.gapHeight / 2, (float)config.screenHeight - (config.gapHeight * 2));
+    obstacle->top.height = (float)GetRandomValue((int)config.gapHeight / 2, (int)config.obstacleHeight - ((int)config.gapHeight * 2));
     obstacle->top.width = ObstacleWidth;
     obstacle->top.x = config.startX;
-    obstacle->top.y = ObstacleTopY;
+    obstacle->top.y = (float)ObstacleTopY;
 
-    obstacle->bottom.height = config.screenHeight - obstacle->top.height - config.gapHeight;
+    obstacle->bottom.height = config.obstacleHeight - obstacle->top.height - config.gapHeight;
     obstacle->bottom.width = ObstacleWidth;
     obstacle->bottom.x = config.startX;
-    obstacle->bottom.y = config.screenHeight - obstacle->bottom.height;
+    obstacle->bottom.y = config.obstacleHeight - obstacle->bottom.height;
 }
 void initGame()
 {
@@ -83,7 +83,7 @@ void initGame()
     bird.pos.y = BirdInitialY;
     bird.speedY = 0;
     for (int i = 0; i < NUMOBSTACLES; i++) {
-        ObstacleConfig config = { ScreenWidth + (i * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap };
+        ObstacleConfig config = { (float)ScreenWidth + ((float)i * (ObstacleWidth + ObstacleSpacing)), (float)ScreenHeight, ObstacleGap };
         resetObstacle(&obstacles[i], config);
     }
 }
@@ -157,7 +157,7 @@ void gameLoop(Texture2D birdTex)
         obstacles[i].top.x -= ObstacleSpeed;
         obstacles[i].bottom.x -= ObstacleSpeed;
         if (obstacles[i].top.x == -obstacles[i].top.width) {
-            ObstacleConfig config = { ScreenWidth, ScreenHeight, ObstacleGap };
+            ObstacleConfig config = { (float)ScreenWidth, (float)ScreenHeight, ObstacleGap };
             resetObstacle(&obstacles[i], config);
         }
         if (obstacles[i].top.x + ObstacleWidth == bird.pos.x) {
@@ -166,13 +166,13 @@ void gameLoop(Texture2D birdTex)
         snprintf(scoreText, sizeof(scoreText), "Score \n\t %d", score); // NOLINT
     }
 
-    Vector2 birdCenter = { .x = bird.pos.x + (birdTex.width / Half), .y = bird.pos.y + (birdTex.height / Half) };
+    Vector2 birdCenter = { .x = bird.pos.x + ((float)birdTex.width / Half), .y = bird.pos.y + ((float)birdTex.height / Half) };
     for (int i = 0; i < NUMOBSTACLES; i++) {
-        if ((bird.pos.y > ScreenHeight) || CheckCollisionCircleRec(birdCenter, birdTex.height / Half, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, birdTex.height / Half, obstacles[i].bottom)) {
+        if ((bird.pos.y > (float)ScreenHeight) || CheckCollisionCircleRec(birdCenter, (float)birdTex.height / Half, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, (float)birdTex.height / Half, obstacles[i].bottom)) {
             bird.pos.x = BirdInitialX;
             bird.pos.y = BirdInitialY;
             for (int j = 0; j < NUMOBSTACLES; j++) {
-                ObstacleConfig config = { ScreenWidth + (j * (ObstacleWidth + ObstacleSpacing)), ScreenHeight, ObstacleGap };
+                ObstacleConfig config = { (float)ScreenWidth + ((float)j * (ObstacleWidth + ObstacleSpacing)), (float)ScreenHeight, ObstacleGap };
                 resetObstacle(&obstacles[j], config);
             }
             score = 0;
@@ -187,15 +187,15 @@ void gameLoop(Texture2D birdTex)
         Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - ((RoundedWidth - ObstacleWidth) / Half), .y = obstacles[i].top.height - RoundedHeight };
         DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
         DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
-        DrawLine(obstacles[i].top.x, obstacles[i].top.y, obstacles[i].top.x, obstacles[i].top.height - borderRoundedTop.height, BLACK);
-        DrawLine(obstacles[i].top.x + ObstacleWidth, obstacles[i].top.y, obstacles[i].top.x + ObstacleWidth, obstacles[i].top.height - borderRoundedTop.height, BLACK);
+        DrawLine((int)obstacles[i].top.x, (int)obstacles[i].top.y, (int)obstacles[i].top.x, (int)obstacles[i].top.height - (int)borderRoundedTop.height, BLACK);
+        DrawLine((int)obstacles[i].top.x + (int)ObstacleWidth, (int)obstacles[i].top.y, (int)obstacles[i].top.x + (int)ObstacleWidth, (int)obstacles[i].top.height - (int)borderRoundedTop.height, BLACK);
         Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - ((RoundedWidth - ObstacleWidth) / Half), .y = obstacles[i].bottom.y };
         DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
         DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
-        DrawLine(obstacles[i].bottom.x, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x, ScreenHeight, BLACK);
-        DrawLine(obstacles[i].bottom.x + ObstacleWidth, obstacles[i].bottom.y + borderRoundedBottom.height, obstacles[i].bottom.x + ObstacleWidth, ScreenHeight, BLACK);
+        DrawLine((int)obstacles[i].bottom.x, (int)obstacles[i].bottom.y + (int)borderRoundedBottom.height, (int)obstacles[i].bottom.x, ScreenHeight, BLACK);
+        DrawLine((int)obstacles[i].bottom.x + (int)ObstacleWidth, (int)obstacles[i].bottom.y + (int)borderRoundedBottom.height, (int)obstacles[i].bottom.x + (int)ObstacleWidth, ScreenHeight, BLACK);
     }
-    DrawTexture(birdTex, bird.pos.x, bird.pos.y, WHITE);
+    DrawTexture(birdTex, (int)bird.pos.x, (int)bird.pos.y, WHITE);
     const int ScorePosX = 350;
     const int ScorePosY = 50;
     const int ScoreFontSize = 50;
