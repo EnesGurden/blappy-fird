@@ -21,4 +21,4 @@ exe = executable(
 
 test('basic', exe)
 
-install_data(sources: 'resources/bird.png', install_dir: '/resources')
+install_data(sources: 'bird.png', install_dir: '/resources')
