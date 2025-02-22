@@ -168,7 +168,7 @@ void gameLoop(Texture2D birdTex)
 
     Vector2 birdCenter = { .x = bird.pos.x + ((float)birdTex.width / Half), .y = bird.pos.y + ((float)birdTex.height / Half) };
     for (int i = 0; i < NUMOBSTACLES; i++) {
-        if ((bird.pos.y > (float)ScreenHeight) || CheckCollisionCircleRec(birdCenter, (float)birdTex.height / Half, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, (float)birdTex.height / Half, obstacles[i].bottom)) {
+        if ((bird.pos.y > (float)ScreenHeight) || (bird.pos.y < (float)-birdTex.height && bird.pos.x > obstacles[i].top.x) || CheckCollisionCircleRec(birdCenter, (float)birdTex.height / Half, obstacles[i].top) || CheckCollisionCircleRec(birdCenter, (float)birdTex.height / Half, obstacles[i].bottom)) {
             bird.pos.x = BirdInitialX;
             bird.pos.y = BirdInitialY;
             for (int j = 0; j < NUMOBSTACLES; j++) {
