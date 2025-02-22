@@ -1,6 +1,6 @@
 ---
 Checks:          '*,-altera-*,-clang-diagnostic-*,-cppcoreguidelines-*,-llvmlibc-restrict-system-libc-headers'
-WarningsAsErrors: ''
+WarningsAsErrors: '*,-bugprone-narrowing-conversions'
 HeaderFileExtensions:
   - ''
   - h

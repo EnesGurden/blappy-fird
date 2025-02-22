@@ -18,6 +18,7 @@ Section "MainSection"
 
     ; Copy application files
     File /r "build\blappy-fird.exe"
+    File /r "bird.png"
 
     ; Create shortcuts
     CreateShortcut "$DESKTOP\BlappyFird.lnk" "$INSTDIR\blappy-fird.exe"
@@ -31,6 +32,7 @@ SectionEnd
 Section "Uninstall"
     ; Remove installed files
     Delete "$INSTDIR\blappy-fird.exe"
+    Delete "$INSTDIR\bird.png"
 
     ; Remove shortcuts
     Delete "$DESKTOP\BlappyFird.lnk"
