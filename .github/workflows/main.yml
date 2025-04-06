@@ -33,7 +33,7 @@ jobs:
           choco config set --name="'cacheLocation'" --value="$env:USERPROFILE\choco"
           python3.exe -m venv $env:USERPROFILE\env-build
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
-          pip install ninja meson cppcheck
+          pip install ninja meson conan cppcheck
 
       # Set up MinGW64 environment
       - name: Set up MinGW64
@@ -54,7 +54,7 @@ jobs:
         run: |
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           conan profile detect
-          conan install . --output-folder=build --build=missing -pr .conanprofile
+          conan install . --output-folder=build --build=missing -pr linux.conanprofile
           meson setup --native-file .\build\build\Release\generators\conan_meson_native.ini build 
           meson compile -C build
 
@@ -63,7 +63,7 @@ jobs:
         run: |
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIncludeSystem --inconclusive --quiet --error-exitcode=1
-          clang-tidy --config-file=.clang-tidy --warnings-as-errors=* -p .\build src/*.c 
+          clang-tidy --config-file=.clang-tidy --warnings-as-errors=* -p .\build src/*.cpp 
 
       # Package the build output
       - name: Package build artifacts
