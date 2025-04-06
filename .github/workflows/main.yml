@@ -33,7 +33,7 @@ jobs:
           choco config set --name="'cacheLocation'" --value="$env:USERPROFILE\choco"
           python3.exe -m venv $env:USERPROFILE\env-build
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
-          pip install ninja meson conan cppcheck
+          pip install ninja meson cppcheck
 
       # Set up MinGW64 environment
       - name: Set up MinGW64
@@ -46,7 +46,7 @@ jobs:
      # Check code format
       - name: Check format
         run: |
-          clang-format -style=Webkit -i $(git ls-files 'src/*.c' 'src/*.h')
+          clang-format -style=Webkit -i $(git ls-files 'src/*.cpp' 'src/*.h')
           git diff --exit-code || (echo "Code is not formatted properly." && exit 1)
 
       # Build the project
