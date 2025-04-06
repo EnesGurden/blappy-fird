@@ -1,8 +1,10 @@
-#include <math.h>
 #include <raylib.h>
-#include <stdio.h>
+
+#include <cmath>
+#include <cstdio>
 
 #define PROJECT_NAME "blappy-fird"
+
 typedef struct {
     Rectangle top;
     Rectangle bottom;
@@ -116,7 +118,7 @@ void handleHome()
         }
     }
     for (int i = 0; i < MenuOptionsNumber; i++) {
-        Color color = (i == menuIndex) ? YELLOW : DARKGRAY;
+        Color_t color = (i == menuIndex) ? YELLOW : DARKGRAY;
         DrawText(menuOptions[i], (ScreenWidth / 2) - (MeasureText(menuOptions[i], MenuFontSize) / 2), MenuInitialY + (i * MenuVerticalSpace), MenuFontSize, color);
     }
 }
@@ -184,12 +186,22 @@ void gameLoop(Texture2D birdTex)
         DrawRectangleRec(obstacles[i].top, GREEN);
         DrawRectangleRec(obstacles[i].bottom, GREEN);
 
-        Rectangle borderRoundedTop = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].top.x - ((RoundedWidth - ObstacleWidth) / Half), .y = obstacles[i].top.height - RoundedHeight };
+        Rectangle borderRoundedTop = {
+            .x = obstacles[i].top.x - ((RoundedWidth - ObstacleWidth) / Half),
+            .y = obstacles[i].top.height - RoundedHeight,
+            .width = RoundedWidth,
+            .height = RoundedHeight,
+        };
         DrawRectangleRounded(borderRoundedTop, ThicknessRound, Segment, GREEN);
         DrawRectangleRoundedLinesEx(borderRoundedTop, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
         DrawLine((int)obstacles[i].top.x, (int)obstacles[i].top.y, (int)obstacles[i].top.x, (int)obstacles[i].top.height - (int)borderRoundedTop.height, BLACK);
         DrawLine((int)obstacles[i].top.x + (int)ObstacleWidth, (int)obstacles[i].top.y, (int)obstacles[i].top.x + (int)ObstacleWidth, (int)obstacles[i].top.height - (int)borderRoundedTop.height, BLACK);
-        Rectangle borderRoundedBottom = { .height = RoundedHeight, .width = RoundedWidth, .x = obstacles[i].bottom.x - ((RoundedWidth - ObstacleWidth) / Half), .y = obstacles[i].bottom.y };
+        Rectangle borderRoundedBottom = {
+            .x = obstacles[i].bottom.x - ((RoundedWidth - ObstacleWidth) / Half),
+            .y = obstacles[i].bottom.y,
+            .width = RoundedWidth,
+            .height = RoundedHeight
+        };
         DrawRectangleRounded(borderRoundedBottom, ThicknessRound, Segment, GREEN);
         DrawRectangleRoundedLinesEx(borderRoundedBottom, ThicknessRound, Segment, ThicknessLine, DARKGRAY);
         DrawLine((int)obstacles[i].bottom.x, (int)obstacles[i].bottom.y + (int)borderRoundedBottom.height, (int)obstacles[i].bottom.x, ScreenHeight, BLACK);
