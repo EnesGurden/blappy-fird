@@ -11,7 +11,7 @@ Game::Game()
     , m_obstacleGap(150.0f)
     , m_gameSpeed(2.5f)
     , m_gravity(1400.0f)
-    , m_painter()
+    , m_painter({ 900, 450 })
     , m_controller()
 {
 }
@@ -92,16 +92,16 @@ void Painter::drawCircle(Circle circle)
 
 float Painter::sceneWidth()
 {
-    return 0.0f;
+    return m_sceneWidth;
 }
 float Painter::sceneHeight()
 {
-    return 0.0f;
+    return m_sceneHeight;
 }
 
 void Game::init()
 {
-    InitWindow(m_painter.sceneWidth(), m_painter.sceneHeight(), m_name.c_str());
+    InitWindow(m_screenDimension.first, m_screenDimension.second, m_name.c_str());
     SetTargetFPS(m_fps);
     Bird* bird = new Bird();
     Obstacle* obstacle = new Obstacle();
@@ -118,7 +118,16 @@ void Game::loop()
 
 void Game::draw()
 {
+    BeginDrawing();
+    ClearBackground(SKYBLUE);
     for (auto gameObject : m_gameObjects) {
         gameObject->draw(m_painter);
     }
+
+    EndDrawing();
+}
+
+bool Game::shouldClose()
+{
+    return WindowShouldClose();
 }

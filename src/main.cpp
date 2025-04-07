@@ -10,9 +10,8 @@ int main(int argc, char** argv)
     Game game;
     game.init();
 
-    while (true) {
+    while (!game.shouldClose()) {
         game.loop();
-        printf("\r\nI am here");
         game.draw();
     }
 

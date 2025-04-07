@@ -3,7 +3,6 @@
 #include <list>
 #include <math.h>
 #include <string>
-#include <tuple>
 
 enum COLOR {
     C_RED = 0xFF0000FF,
@@ -66,12 +65,22 @@ struct Circle {
 
 class Painter {
 public:
+    Painter(int sceneWidth, int sceneHeight)
+        : m_sceneHeight(sceneHeight)
+        , m_sceneWidth(sceneWidth)
+    {
+    }
+
     void drawText(Text text);
     void drawRect(Rectangle_s rect);
     void drawLine(Line line);
     void drawCircle(Circle circle);
     float sceneWidth();
     float sceneHeight();
+
+private:
+    int m_sceneWidth;
+    int m_sceneHeight;
 };
 struct GameObject {
     virtual void draw(Painter painter) = 0;
@@ -110,12 +119,6 @@ public:
 
     void draw(Painter painter) override
     {
-        float upperRectHeight = m_pos.y - m_gap / 2;
-        float bottomRectHeight = painter.sceneHeight() - upperRectHeight - m_gap;
-        Rectangle_s upper { m_pos, m_width, upperRectHeight, C_GREEN };
-        Rectangle_s bottom { m_pos, m_width, bottomRectHeight, C_GREEN };
-        painter.drawRect(upper);
-        painter.drawRect(bottom);
     }
     void update() override
     {
@@ -162,7 +165,6 @@ class Game {
 private:
     int m_fps;
     int m_score;
-    std::tuple<int, int> m_screenDimension;
     int m_obstacleCount;
     float m_obstacleGap;
     float m_gameSpeed;
@@ -174,6 +176,7 @@ public:
     Game();
     ~Game();
 
+    std::pair<int, int> m_screenDimension;
     std::string m_name;
     float m_gravity;
     Painter m_painter;
@@ -181,4 +184,6 @@ public:
     void init();
     void loop();
     void draw();
+
+    bool shouldClose();
 };
