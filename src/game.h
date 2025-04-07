@@ -32,6 +32,16 @@ struct Color_t {
 struct Point {
     float x;
     float y;
+    Point(float x_, float y_)
+        : x(x_)
+        , y(y_)
+    {
+    }
+    Point()
+        : x(0.0f)
+        , y(0.0f)
+    {
+    }
 };
 
 struct Text {
@@ -99,7 +109,6 @@ class Score : public GameObject {
 
     void update() override
     {
-        printf("\r\nThis is Score update");
     }
 };
 
@@ -113,7 +122,6 @@ public:
         : m_width(100.0f)
         , m_gap(150.0f)
         , m_pos()
-    // , m_pos({ m_painter.scenewidth(), m_painter.sceneHeight() / 2.0f })
     {
     }
 
@@ -122,18 +130,15 @@ public:
     }
     void update() override
     {
-        printf("\r\nThis is Obstacle update");
     }
 };
 
 class Bird : public GameObject {
 private:
+public:
     Point m_pos;
     float m_speed;
-
-public:
     Bird()
-        // : m_pos({ Game::m_painter.scenewidth() / 3.0f, Game::m_painter.sceneHeight() / 2.0f })
         : m_pos()
         , m_speed()
     {
@@ -141,12 +146,12 @@ public:
 
     void draw(Painter painter) override
     {
-        Circle circle { m_pos, 30.0f };
+        const float radius = 18.0f;
+        Circle circle { m_pos, radius, C_YELLOW };
         painter.drawCircle(circle);
     }
     void update() override
     {
-        printf("\r\nThis is Bird update");
     }
 };
 
