@@ -113,11 +113,12 @@ class Score : public GameObject {
 };
 
 class Obstacle : public GameObject {
+private:
     float m_width;
     float m_gap;
-    Point m_pos;
 
 public:
+    Point m_pos;
     Obstacle()
         : m_width(100.0f)
         , m_gap(150.0f)
@@ -127,6 +128,21 @@ public:
 
     void draw(Painter painter) override
     {
+        m_pos.y = painter.sceneHeight() - m_gap / 2.0f - 5; // min 75, max 375
+        const int ObstacleMinHeight = 20;
+        const int ObstacleMinPosY = m_gap / 2;
+        const int ObstacleMaxPosY = (int)painter.sceneHeight() - (int)m_gap / 2;
+        m_pos.y = rand() % (ObstacleMaxPosY - ObstacleMinPosY - ObstacleMinHeight) + ObstacleMinPosY + ObstacleMinHeight;
+        float upperRectHeight = m_pos.y - m_gap / 2.0f;
+        float bottomRectHeight = painter.sceneHeight() - upperRectHeight - m_gap;
+        Rectangle_s upper { m_pos, m_width, upperRectHeight, C_GREEN };
+        upper.m_pos.y -= m_gap / 2.0f + upperRectHeight;
+        Rectangle_s bottom { m_pos, m_width, bottomRectHeight, C_GREEN };
+        bottom.m_pos.y += m_gap / 2.0f;
+        painter.drawRect(upper);
+        painter.drawRect(bottom);
+        printf("\r\n x: %.2f, y: %.2f", m_pos.x, m_pos.y);
+        // printf("\r\n %.2f , %.2f", upperRectHeight, bottomRectHeight);
     }
     void update() override
     {
