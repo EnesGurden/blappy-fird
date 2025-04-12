@@ -103,14 +103,14 @@ void Game::init()
 {
     InitWindow(m_screenDimension.first, m_screenDimension.second, m_name.c_str());
     SetTargetFPS(m_fps);
+
     Bird* bird = new Bird();
     bird->m_pos.x = m_screenDimension.first / 5.0f;
     bird->m_pos.y = m_screenDimension.second / 2.0f;
-    Obstacle* obstacle = new Obstacle();
-    obstacle->m_pos.x = m_screenDimension.first - 500;
-    obstacle->m_pos.y = m_screenDimension.second / 2.0f;
     m_gameObjects.push_back(bird);
-    m_gameObjects.push_back(obstacle);
+    m_gameObjects.push_back(new Obstacle(100.0, { 100, 200 }));
+    m_gameObjects.push_back(new Obstacle(100.0, { 400, 300 }));
+    m_gameObjects.push_back(new Obstacle(100.0, { 700, 400 }));
 };
 
 void Game::loop()
