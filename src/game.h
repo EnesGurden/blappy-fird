@@ -113,24 +113,33 @@ class Score : public GameObject {
 };
 
 class Obstacle : public GameObject {
-    float m_width;
-    float m_gap;
-    Point m_pos;
-
 public:
-    Obstacle()
-        : m_width(100.0f)
-        , m_gap(150.0f)
-        , m_pos()
+    Obstacle(float width, Point pos)
+        : m_width(width)
+        , m_pos(pos)
     {
     }
 
     void draw(Painter painter) override
     {
+        float upperRectHeight = m_pos.y - 150.0f / 2.0f;
+        float bottomRectHeight = painter.sceneHeight() - upperRectHeight - 150.0f;
+        Rectangle_s upper { m_pos, m_width, upperRectHeight, C_GREEN };
+        upper.m_pos.y -= 150.0f / 2.0f + upperRectHeight;
+        Rectangle_s bottom { m_pos, m_width, bottomRectHeight, C_GREEN };
+        bottom.m_pos.y += 150.0f / 2.0f;
+        painter.drawRect(upper);
+        painter.drawRect(bottom);
+        printf("\r\n x: %.2f, y: %.2f", m_pos.x, m_pos.y);
+        // printf("\r\n %.2f , %.2f", upperRectHeight, bottomRectHeight);
     }
     void update() override
     {
     }
+
+private:
+    float m_width;
+    Point m_pos;
 };
 
 class Bird : public GameObject {
