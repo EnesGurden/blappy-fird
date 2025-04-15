@@ -73,6 +73,17 @@ struct Circle {
     Color_t color;
 };
 
+class Controller {
+public:
+    bool isUpPressed();
+    bool isDownPressed();
+    bool isBackPressed();
+    bool isEnterPressed();
+    bool isEscPressed();
+    bool isLeftMousePressed();
+    bool isRightMousePressed();
+};
+
 class Painter {
 public:
     Painter(int sceneWidth, int sceneHeight)
@@ -94,7 +105,7 @@ private:
 };
 struct GameObject {
     virtual void draw(Painter painter) = 0;
-    virtual void update() = 0;
+    virtual void update(Controller controller) = 0;
 };
 
 class Score : public GameObject {
@@ -107,7 +118,7 @@ class Score : public GameObject {
         painter.drawText(text);
     }
 
-    void update() override
+    void update(Controller controller) override
     {
     }
 };
@@ -130,16 +141,20 @@ public:
         bottom.m_pos.y += 150.0f / 2.0f;
         painter.drawRect(upper);
         painter.drawRect(bottom);
-        printf("\r\n x: %.2f, y: %.2f", m_pos.x, m_pos.y);
-        // printf("\r\n %.2f , %.2f", upperRectHeight, bottomRectHeight);
     }
-    void update() override
+    void update(Controller controller) override
     {
+        m_pos.x -= 2.5f;
+    }
+
+    Point getPos()
+    {
+        return m_pos;
     }
 
 private:
-    float m_width;
     Point m_pos;
+    float m_width;
 };
 
 class Bird : public GameObject {
@@ -159,20 +174,16 @@ public:
         Circle circle { m_pos, radius, C_YELLOW };
         painter.drawCircle(circle);
     }
-    void update() override
-    {
-    }
-};
 
-class Controller {
-public:
-    bool isUpPressed();
-    bool isDownPressed();
-    bool isBackPressed();
-    bool isEnterPressed();
-    bool isEscPressed();
-    bool isLeftMousePressed();
-    bool isRightMousePressed();
+    void update(Controller controller) override
+    {
+        if (controller.isLeftMousePressed() || controller.isUpPressed()) {
+            m_speed = 494.97;
+        }
+
+        m_pos.y -= m_speed * (1.0 / 60);
+        m_speed -= 23.33;
+    }
 };
 
 class Game {

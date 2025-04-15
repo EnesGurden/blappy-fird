@@ -22,44 +22,37 @@ Game::~Game()
 
 bool Controller::isUpPressed()
 {
-    IsKeyPressed(KEY_UP);
-    return false;
+    return IsKeyPressed(KEY_UP);
 }
 
 bool Controller::isDownPressed()
 {
-    IsKeyPressed(KEY_DOWN);
-    return false;
+    return IsKeyPressed(KEY_DOWN);
 }
 
 bool Controller::isBackPressed()
 {
-    IsKeyPressed(KEY_BACKSPACE);
-    return false;
+    return IsKeyPressed(KEY_BACKSPACE);
 }
 
 bool Controller::isEnterPressed()
 {
-    IsKeyPressed(KEY_ENTER);
-    return false;
+    return IsKeyPressed(KEY_ENTER);
 }
 
 bool Controller::isEscPressed()
 {
-    IsKeyPressed(KEY_ESCAPE);
-    return false;
+    return IsKeyPressed(KEY_ESCAPE);
 }
 
 bool Controller::isLeftMousePressed()
 {
-    IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-    return false;
+    return IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
 
 bool Controller::isRightMousePressed()
 {
-    IsMouseButtonPressed(MOUSE_RIGHT_BUTTON);
-    return false;
+    return IsMouseButtonPressed(MOUSE_RIGHT_BUTTON);
 }
 
 void Painter::drawText(Text text)
@@ -108,15 +101,13 @@ void Game::init()
     bird->m_pos.x = m_screenDimension.first / 5.0f;
     bird->m_pos.y = m_screenDimension.second / 2.0f;
     m_gameObjects.push_back(bird);
-    m_gameObjects.push_back(new Obstacle(100.0, { 100, 200 }));
-    m_gameObjects.push_back(new Obstacle(100.0, { 400, 300 }));
-    m_gameObjects.push_back(new Obstacle(100.0, { 700, 400 }));
+    m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 2.6, 200 }));
 };
 
 void Game::loop()
 {
     for (auto gameObject : m_gameObjects) {
-        gameObject->update();
+        gameObject->update(m_controller);
     }
 }
 
@@ -124,6 +115,17 @@ void Game::draw()
 {
     BeginDrawing();
     ClearBackground(SKYBLUE);
+
+    if (!m_gameObjects.empty()) {
+        GameObject* lastObject = m_gameObjects.back();
+        if (auto* obstacle = dynamic_cast<Obstacle*>(lastObject)) {
+            if (obstacle->getPos().x >= m_screenDimension.first && obstacle->getPos().x <= m_screenDimension.first + 2.5) {
+                float posY = rand() % (m_screenDimension.second - 200) + 100;
+                m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 250, posY }));
+            }
+        }
+    }
+
     for (auto gameObject : m_gameObjects) {
         gameObject->draw(m_painter);
     }
