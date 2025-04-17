@@ -92,16 +92,55 @@ float Painter::sceneHeight()
     return m_sceneHeight;
 }
 
-void Game::init()
+void Game::initObjects()
 {
-    InitWindow(m_screenDimension.first, m_screenDimension.second, m_name.c_str());
-    SetTargetFPS(m_fps);
-
     Bird* bird = new Bird();
     bird->m_pos.x = m_screenDimension.first / 5.0f;
     bird->m_pos.y = m_screenDimension.second / 2.0f;
     m_gameObjects.push_back(bird);
     m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 2.6, 200 }));
+}
+
+void Game::init()
+{
+    InitWindow(m_screenDimension.first, m_screenDimension.second, m_name.c_str());
+    SetTargetFPS(m_fps);
+    initObjects();
+}
+
+void Game::checkCollision()
+{
+    auto iter = m_gameObjects.begin();
+    auto* bird = (Bird*)*iter;
+    iter++;
+    Vector2 center = { bird->m_pos.x, bird->m_pos.y };
+    Obstacle* obstacle = (Obstacle*)*iter;
+    if (obstacle->getPos().x < -obstacle->getWidth()) {
+        m_gameObjects.erase(iter);
+        return;
+    }
+
+    Rectangle upperRec = {
+        obstacle->upperRectangle().m_pos.x,
+        obstacle->upperRectangle().m_pos.y,
+        obstacle->upperRectangle().width,
+        obstacle->upperRectangle().height
+    };
+    Rectangle bottomRec = {
+        obstacle->bottomRectangle(m_screenDimension.second).m_pos.x,
+        obstacle->bottomRectangle(m_screenDimension.second).m_pos.y,
+        obstacle->bottomRectangle(m_screenDimension.second).width,
+        obstacle->bottomRectangle(m_screenDimension.second).height
+    };
+
+    const bool BirdOutScreen = bird->m_pos.y > m_screenDimension.second || (bird->m_pos.y < 0 && bird->m_pos.x > obstacle->getPos().x);
+    const bool CollisionUp = CheckCollisionCircleRec(center, bird->radius, upperRec);
+    const bool CollisionBottom = CheckCollisionCircleRec(center, bird->radius, bottomRec);
+
+    if (BirdOutScreen || CollisionUp || CollisionBottom) {
+        m_gameObjects.clear();
+        initObjects();
+    }
 };
 
 void Game::loop()
@@ -109,6 +148,7 @@ void Game::loop()
     for (auto gameObject : m_gameObjects) {
         gameObject->update(m_controller);
     }
+    Game::checkCollision();
 }
 
 void Game::draw()
