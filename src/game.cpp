@@ -92,8 +92,14 @@ float Painter::sceneHeight()
     return m_sceneHeight;
 }
 
+Score* Game::getScore()
+{
+    return m_gameObjects.empty() ? nullptr : dynamic_cast<Score*>(m_gameObjects.front());
+}
+
 void Game::initObjects()
 {
+    m_gameObjects.push_back(new Score(m_screenDimension.first / 2.0f, 40));
     m_gameObjects.push_back(new Bird(m_screenDimension.first / 5.0f, m_screenDimension.second / 2.0f));
     m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 2.6, rand() % 200 + 100 }));
 }
@@ -108,6 +114,7 @@ void Game::init()
 void Game::checkCollision()
 {
     auto iter = m_gameObjects.begin();
+    iter++;
     auto* bird = (Bird*)*iter;
     iter++;
     Vector2 center = { bird->m_pos.x, bird->m_pos.y };
@@ -146,6 +153,7 @@ void Game::loop()
         gameObject->update(m_controller);
     }
     Game::checkCollision();
+    Score* score = getScore();
 }
 
 void Game::draw()
@@ -166,6 +174,8 @@ void Game::draw()
     for (auto gameObject : m_gameObjects) {
         gameObject->draw(m_painter);
     }
+    auto* score = getScore();
+    score->draw(m_painter);
 
     EndDrawing();
 }
