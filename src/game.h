@@ -179,8 +179,8 @@ public:
     Point m_pos;
     float m_speed;
     float radius;
-    Bird()
-        : m_pos()
+    Bird(float posX, float posY)
+        : m_pos(posX, posY)
         , m_speed()
         , radius(18.0f)
     {

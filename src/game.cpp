@@ -94,11 +94,8 @@ float Painter::sceneHeight()
 
 void Game::initObjects()
 {
-    Bird* bird = new Bird();
-    bird->m_pos.x = m_screenDimension.first / 5.0f;
-    bird->m_pos.y = m_screenDimension.second / 2.0f;
-    m_gameObjects.push_back(bird);
-    m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 2.6, 200 }));
+    m_gameObjects.push_back(new Bird(m_screenDimension.first / 5.0f, m_screenDimension.second / 2.0f));
+    m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 2.6, rand() % 200 + 100 }));
 }
 
 void Game::init()
