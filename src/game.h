@@ -133,23 +133,39 @@ public:
 
     void draw(Painter painter) override
     {
-        float upperRectHeight = m_pos.y - 150.0f / 2.0f;
-        float bottomRectHeight = painter.sceneHeight() - upperRectHeight - 150.0f;
-        Rectangle_s upper { m_pos, m_width, upperRectHeight, C_GREEN };
-        upper.m_pos.y -= 150.0f / 2.0f + upperRectHeight;
-        Rectangle_s bottom { m_pos, m_width, bottomRectHeight, C_GREEN };
-        bottom.m_pos.y += 150.0f / 2.0f;
-        painter.drawRect(upper);
-        painter.drawRect(bottom);
+        painter.drawRect(upperRectangle());
+        painter.drawRect(bottomRectangle(painter.sceneHeight()));
     }
     void update(Controller controller) override
     {
         m_pos.x -= 2.5f;
     }
 
+    Rectangle_s upperRectangle()
+    {
+        float upperRectHeight = m_pos.y - 150.0f / 2.0f;
+        Rectangle_s upper = { m_pos, m_width, upperRectHeight, C_GREEN };
+        upper.m_pos.y -= 150.0f / 2.0f + upperRectHeight;
+        return upper;
+    }
+
+    Rectangle_s bottomRectangle(float sceneHeight)
+    {
+        float upperRectHeight = m_pos.y - 150.0f / 2.0f;
+        float bottomRectHeight = sceneHeight - upperRectHeight - 150.0f;
+        Rectangle_s bottom = { m_pos, m_width, bottomRectHeight, C_GREEN };
+        bottom.m_pos.y += 150.0f / 2.0f;
+        return bottom;
+    }
+
     Point getPos()
     {
         return m_pos;
+    }
+
+    float getWidth()
+    {
+        return m_width;
     }
 
 private:
@@ -162,15 +178,16 @@ private:
 public:
     Point m_pos;
     float m_speed;
+    float radius;
     Bird()
         : m_pos()
         , m_speed()
+        , radius(18.0f)
     {
     }
 
     void draw(Painter painter) override
     {
-        const float radius = 18.0f;
         Circle circle { m_pos, radius, C_YELLOW };
         painter.drawCircle(circle);
     }
@@ -206,7 +223,9 @@ public:
     float m_gravity;
     Painter m_painter;
 
+    void initObjects();
     void init();
+    void checkCollision();
     void loop();
     void draw();
 
