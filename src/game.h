@@ -11,6 +11,7 @@ enum COLOR {
     C_WHITE = 0xFFFFFFFF,
     C_BLACK = 0x000000FF,
     C_YELLOW = 0xFFFF00FF,
+    C_GRAY = 0x888888FF,
 };
 
 struct Color_t {
@@ -49,8 +50,20 @@ struct Text {
     Point pos;
     float fontSize;
     Color_t color;
-
-    Text(int value, Point pos, Color_t color);
+    Text(int value, Point pos, float fontSize, Color_t color)
+        : text(std::to_string(value))
+        , pos(pos)
+        , fontSize(fontSize)
+        , color(color)
+    {
+    }
+    Text(std::string text, Point pos, float fontSize, Color_t color)
+        : text(text)
+        , pos(pos)
+        , fontSize(fontSize)
+        , color(color)
+    {
+    }
 };
 
 struct Rectangle_s {
@@ -109,13 +122,24 @@ struct GameObject {
 };
 
 class Score : public GameObject {
-    Point pos;
+private:
+    Point m_pos;
+
+public:
     int value;
+    Score(float posX, float posY)
+        : value(0)
+        , m_pos(posX, posY)
+    {
+    }
 
     void draw(Painter painter) override
     {
-        Text text(value, pos, C_RED);
-        painter.drawText(text);
+        Point a(200, 100);
+        Text textScore("Score", { painter.sceneWidth() / 2, 5 }, 30, C_GRAY);
+        Text textValue(value, { textScore.pos.x + textScore.fontSize, textScore.pos.y + textScore.fontSize * 1.3f }, textScore.fontSize * 0.9, C_GRAY);
+        painter.drawText(textScore);
+        painter.drawText(textValue);
     }
 
     void update(Controller controller) override
@@ -179,8 +203,8 @@ public:
     Point m_pos;
     float m_speed;
     float radius;
-    Bird()
-        : m_pos()
+    Bird(float posX, float posY)
+        : m_pos(posX, posY)
         , m_speed()
         , radius(18.0f)
     {
@@ -223,6 +247,7 @@ public:
     float m_gravity;
     Painter m_painter;
 
+    Score* getScore();
     void initObjects();
     void init();
     void checkCollision();
