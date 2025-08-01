@@ -1,5 +1,4 @@
 from conan import ConanFile
-from conan.tools.cmake import cmake_layout
 
 
 class BlappyFird(ConanFile):
@@ -9,6 +8,4 @@ class BlappyFird(ConanFile):
 
     def requirements(self):
         self.requires("raylib/5.5")
-
-    def layout(self):
-        cmake_layout(self)
+        self.requires("wt/4.11.2")
