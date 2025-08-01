@@ -1,7 +1,4 @@
 #include "game.h"
-#include <cmath>
-#include <cstdio>
-#include <raylib.h>
 
 int main(int argc, char** argv)
 {
