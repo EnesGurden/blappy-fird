@@ -13,6 +13,9 @@ jobs:
       # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
 
       - name: Cache build env
         id: cache-env
@@ -34,14 +37,6 @@ jobs:
           python3.exe -m venv $env:USERPROFILE\env-build
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           pip install ninja meson conan cppcheck
-
-      # Set up MinGW64 environment
-      - name: Set up MinGW64
-        run: |
-          Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
-          choco install mingw --version 8.1.0
-          echo "C:\\tools\\mingw64\\bin" >> "$GITHUB_PATH"
-          refreshenv
  
      # Check code format
       - name: Check format
