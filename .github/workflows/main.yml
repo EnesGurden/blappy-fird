@@ -54,8 +54,8 @@ jobs:
         run: |
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           conan profile detect
-          conan install . --output-folder=build --build=missing -pr .conanprofile
-          meson setup --native-file .\build\build\Release\generators\conan_meson_native.ini build 
+          conan install . --output-folder=build --build=missing
+          meson setup --native-file build/conan_meson_native.ini build 
           meson compile -C build
 
       # Lint the code
