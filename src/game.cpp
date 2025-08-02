@@ -171,7 +171,7 @@ void Game::draw()
         if (auto* obstacle = dynamic_cast<Obstacle*>(lastObject)) {
             if (obstacle->getPos().x >= m_screenDimension.first && obstacle->getPos().x <= m_screenDimension.first + 2.5) {
                 float posY = rand() % (m_screenDimension.second - 200) + 100;
-                m_gameObjects.push_back(new Obstacle(100.0, {float( m_screenDimension.first + 250), float(posY) }));
+                m_gameObjects.push_back(new Obstacle(100.0, { float(m_screenDimension.first + 250), float(posY) }));
             }
         }
     }

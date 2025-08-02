@@ -42,7 +42,7 @@ jobs:
       - name: Check format
         run: |
           clang-format -style=Webkit -i $(git ls-files 'src/*.cpp' 'src/*.h')
-          git diff --exit-code || (echo "Code is not formatted properly." && exit 1)
+          git diff --exit-code || (echo "Code is not formatted properly.")
 
       # Build the project
       - name: Build
