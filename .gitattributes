@@ -1,0 +1,14 @@
+# Set default behavior to use LF for all text files
+* text=auto eol=lf
+
+# Binary files - do not modify line endings
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.eot    binary
