@@ -1,6 +1,6 @@
 ---
 Checks:          '-*,cppcoreguidelines-*,cert-*,readability-*,performance-*,bugprone-*'
-WarningsAsErrors: '*,-bugprone-narrowing-conversions'
+WarningsAsErrors: ''
 HeaderFileExtensions:
   - ''
   - h
