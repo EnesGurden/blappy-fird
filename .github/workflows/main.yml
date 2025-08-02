@@ -58,7 +58,7 @@ jobs:
         run: |
           . $env:USERPROFILE\env-build\Scripts\Activate.ps1
           cppcheck --project=build/compile_commands.json --enable=all --suppress=missingIncludeSystem --inconclusive --quiet --error-exitcode=1
-          clang-tidy --config-file=.clang-tidy --warnings-as-errors=* -p .\build src/*.c 
+          clang-tidy --config-file=.clang-tidy --warnings-as-errors=* -p .\build $(git ls-files 'src/*.cpp' 'src/*.h')
 
       # Package the build output
       - name: Package build artifacts
