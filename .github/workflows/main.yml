@@ -41,7 +41,7 @@ jobs:
      # Check code format
       - name: Check format
         run: |
-          clang-format -style=Webkit -i $(git ls-files 'src/*.c' 'src/*.h')
+          clang-format -style=Webkit -i $(git ls-files 'src/*.cpp' 'src/*.h')
           git diff --exit-code || (echo "Code is not formatted properly." && exit 1)
 
       # Build the project
