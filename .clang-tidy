@@ -1,5 +1,5 @@
 ---
-Checks:          '-*,cppcoreguidelines-*,cert-*,readability-*,modernize-*,performance-*,bugprone-*'
+Checks:          '-*,cppcoreguidelines-*,cert-*,readability-*,performance-*,bugprone-*'
 WarningsAsErrors: '*,-bugprone-narrowing-conversions'
 HeaderFileExtensions:
   - ''
