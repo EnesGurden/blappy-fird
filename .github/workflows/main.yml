@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  mingw-ci:
+  msvc-ci:
     runs-on: windows-latest
 
     steps:
