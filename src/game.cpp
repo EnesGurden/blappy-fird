@@ -63,10 +63,10 @@ void Painter::drawText(Text text)
 void Painter::drawRect(Rectangle_s rect)
 {
     Rectangle rectangle = {
-        .x = rect.m_pos.x,
-        .y = rect.m_pos.y,
-        .width = rect.width,
-        .height = rect.height,
+        rect.m_pos.x,
+        rect.m_pos.y,
+        rect.width,
+        rect.height,
     };
     DrawRectangleRec(rectangle, GetColor(rect.color.rgba));
 }
@@ -101,7 +101,7 @@ void Game::initObjects()
 {
     m_gameObjects.push_back(new Score(m_screenDimension.first / 2.0f, 40));
     m_gameObjects.push_back(new Bird(m_screenDimension.first / 5.0f, m_screenDimension.second / 2.0f));
-    m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 5, rand() % 200 + 100 }));
+    m_gameObjects.push_back(new Obstacle(100.0, { float(m_screenDimension.first + 5), float(rand() % 200 + 100) }));
 }
 
 void Game::init()
@@ -171,7 +171,7 @@ void Game::draw()
         if (auto* obstacle = dynamic_cast<Obstacle*>(lastObject)) {
             if (obstacle->getPos().x >= m_screenDimension.first && obstacle->getPos().x <= m_screenDimension.first + 2.5) {
                 float posY = rand() % (m_screenDimension.second - 200) + 100;
-                m_gameObjects.push_back(new Obstacle(100.0, { m_screenDimension.first + 250, posY }));
+                m_gameObjects.push_back(new Obstacle(100.0, {float( m_screenDimension.first + 250), float(posY) }));
             }
         }
     }
